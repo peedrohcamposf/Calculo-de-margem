@@ -1,105 +1,162 @@
-// parcelas.js
 import { parseBrazilNumber } from "../utils/numbers.js";
 import { parcelas, setParcelas } from "../core/state.js";
 import { attachFormatting } from "../core/formatting.js";
 import { computeAll } from "./calc.js";
 
-/**
- * Gera o array de parcelas a partir do input #qtdParcelas (ou variantes de id)
- * Retorna um array com objetos representando cada parcela.
- */
-export function gerarParcelas() {
-  const el = document.getElementById("qtdParcelas")
-          || document.getElementById("QtdParcelas")
-          || document.querySelector("[name='qtdParcelas']");
-
-  const raw = el?.value ?? "";
-  const parsed = parseInt(String(raw).trim(), 10);
-  const qtd = Number.isNaN(parsed) ? 0 : Math.max(0, parsed);
-
+// ======================================================
+//   FUNÇÃO: GERAR APENAS PARCELAS NORMAIS
+// ======================================================
+export function gerarParcelasNormais(qtd) {
   const arr = [];
-  for (let i = 0; i < qtd; i++) {
+
+  for (let i = 1; i <= qtd; i++) {
     arr.push({
-      row: i + 1,
-      parcelaNum: i + 1,
-      // valores padrão — podem ser atualizados via inputs gerados
-      dias1: 30 * (i + 1),    // coluna 2 (ex.: prazo)
-      valorParcela: 0,        // coluna 3 (input)
-      percentual: 0,          // coluna 4 (input)
-      dias2: 0,               // coluna 5 (input)
-      jurosPercent: 0,        // coluna 6 (input)
-      vpl: 0,                 // coluna 7 (calculo)
-      juros: 0                // coluna 8 (calculo)
+      row: i,
+      parcelaNum: i,
+      dias1: 30 * i,         // agora EDITÁVEL
+      valorParcela: 0,
+      percentual: 0,
+      dias2: 0,
+      jurosPercent: 0,
+      vpl: 0,
+      juros: 0
     });
   }
 
-  return arr;
-}
-
-/**
- * Atualiza o estado global de parcelas e re-renderiza
- */
-export function updateParcelas() {
-  setParcelas(gerarParcelas());
+  setParcelas(arr);
   renderParcelas();
   attachFormatting();
   computeAll();
 }
 
-/**
- * Renderiza as parcelas no container #parcelasList
- * Gera 8 colunas, alinhadas com seu header.
- */
+
+// ======================================================
+//   FUNÇÃO: GERAR LINHA "ENTRADA" + PARCELAMENTO
+// ======================================================
+export function gerarEntradaMaisParcelas(qtdParcelas) {
+  const arr = [];
+
+  // 🟦 Entrada
+  arr.push({
+    row: 0,
+    parcelaNum: "ENTRADA",
+    dias1: 0,            // EDITÁVEL
+    valorParcela: 0,
+    percentual: 0,
+    dias2: 0,
+    jurosPercent: 0,
+    vpl: 0,
+    juros: 0
+  });
+
+  // 🟦 Parcelas normais
+  for (let i = 1; i <= qtdParcelas; i++) {
+    arr.push({
+      row: i,
+      parcelaNum: i,
+      dias1: 30 * i,
+      valorParcela: 0,
+      percentual: 0,
+      dias2: 0,
+      jurosPercent: 0,
+      vpl: 0,
+      juros: 0
+    });
+  }
+
+  setParcelas(arr);
+  renderParcelas();
+  attachFormatting();
+  computeAll();
+}
+
+
+// ======================================================
+//   FUNÇÃO: LIMPAR TODAS AS PARCELAS
+// ======================================================
+export function limparParcelas() {
+  setParcelas([]);
+  const list = document.getElementById("parcelasList");
+  if (list) list.innerHTML = "";
+}
+
+
+// ======================================================
+//   FUNÇÃO: ADICIONAR PARCELA "À VISTA"
+// ======================================================
+export function adicionarParcelaAvista() {
+  const p = {
+    row: 1,
+    parcelaNum: "À vista",
+    dias1: 0,
+    valorParcela: 0,
+    percentual: 100,
+    dias2: 0,
+    jurosPercent: 0,
+    vpl: 0,
+    juros: 0
+  };
+
+  setParcelas([p]);
+  renderParcelas();
+  attachFormatting();
+  computeAll();
+}
+
+
+// ======================================================
+//   FUNÇÃO: RENDERIZAR PARCELAS NO DOM
+// ======================================================
 export function renderParcelas() {
   const list = document.getElementById("parcelasList");
   if (!list) return;
   list.innerHTML = "";
 
-  if (!parcelas || parcelas.length === 0) return;
-
   parcelas.forEach(p => {
     const el = document.createElement("div");
     el.className = "cheader";
-    el.dataset.row = p.row;
 
     el.innerHTML = `
       <div class="row g-2 align-items-center">
-        <!-- 1: Parcela (nº) -->
+
+        <!-- Nº da parcela -->
         <div class="col-header">
-          <div class="field-label">${p.parcelaNum}ª</div>
+        <div class="field-label">${p.row === 0? "Entrada": `${p.parcelaNum}º Parcela`}
         </div>
 
-        <!-- 2: Dias (fixo/auto) -->
-        <div class="col-header">
-          <input id="parcela_dias1_${p.row}" class="form-control" readonly value="${p.dias1}">
         </div>
 
-        <!-- 3: Valor da Parcela (input) -->
+        <!-- Dias (AGORA EDITÁVEL) -->
+        <div class="col-header">
+          <input id="parcela_dias1_${p.row}" class="form-control numeric" value="${p.dias1}">
+        </div>
+
+        <!-- Valor -->
         <div class="col-header">
           <input id="parcela_valor_${p.row}" class="form-control numeric" value="${p.valorParcela}">
         </div>
 
-        <!-- 4: % da Parcela (input) -->
+        <!-- Percentual -->
         <div class="col-header">
           <input id="parcela_percentual_${p.row}" class="form-control numeric" value="${p.percentual}">
         </div>
 
-        <!-- 5: Dias (extra/input) -->
+        <!-- Dias extra -->
         <div class="col-header">
           <input id="parcela_dias2_${p.row}" class="form-control numeric" value="${p.dias2}">
         </div>
 
-        <!-- 6: Juros % (input) -->
+        <!-- Juros % -->
         <div class="col-header">
           <input id="parcela_jurosPercent_${p.row}" class="form-control numeric" value="${p.jurosPercent}">
         </div>
 
-        <!-- 7: VPL (resultado/calculado) -->
+        <!-- VPL -->
         <div class="col-header">
           <input id="parcela_vpl_${p.row}" class="form-control" readonly value="${p.vpl}">
         </div>
 
-        <!-- 8: Juros (resultado/calculado) -->
+        <!-- Juros -->
         <div class="col-header">
           <input id="parcela_juros_${p.row}" class="form-control" readonly value="${p.juros}">
         </div>
@@ -109,46 +166,3 @@ export function renderParcelas() {
     list.appendChild(el);
   });
 }
-
-/**
- * Auto-inicialização: liga listener ao input #qtdParcelas e renderiza ao carregar.
- * - Se sua aplicação já chama updateParcelas() em outro lugar, isso não atrapalha.
- * - Mantém-se defensivo para ids variantes.
- */
-function initParcelasAuto() {
-  function tryAttach() {
-    const el = document.getElementById("qtdParcelas")
-            || document.getElementById("QtdParcelas")
-            || document.querySelector("[name='qtdParcelas']");
-
-    if (el) {
-      // liga ao evento input (digitar/alterar)
-      el.addEventListener("input", () => {
-        updateParcelas();
-      });
-
-      // renderiza uma vez para o estado inicial
-      updateParcelas();
-    } else {
-      // se não achou ainda, tenta novamente em 200ms (caso DOM carregue mais tarde)
-      setTimeout(tryAttach, 200);
-    }
-  }
-
-  // aguarda DOM ready
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", tryAttach);
-  } else {
-    tryAttach();
-  }
-}
-
-// inicia automaticamente
-initParcelasAuto();
-
-// export padrão (opcional)
-export default {
-  gerarParcelas,
-  updateParcelas,
-  renderParcelas
-};

@@ -1,10 +1,10 @@
 export const filiaisPorEmpresa = {
-  Brasif: [
+  brasif: [
     "Belo Horizonte", "Brasilia", "Cuiabá", "Curitiba",
     "Goiânia", "Jundiaí", "Palmas", "Ribeirão Preto",
     "Rio de Janeiro", "Serra"
   ],
-  Maxum: [
+  maxum: [
     "Luís Eduardo Magalhães", "Roda Velha",
     "Correntina", "Formosa do Rio Preto", "Bom Jesus"
   ]

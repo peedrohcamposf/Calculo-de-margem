@@ -1,16 +1,19 @@
-import { updateParcelas } from "./features/parcelas.js";
+import { 
+    limparParcelas, 
+    gerarParcelasNormais, 
+    adicionarParcelaAvista,
+    gerarEntradaMaisParcelas 
+} from "./features/parcelas.js";
+
 import { renderMaquinas, addMaquinaEmpty } from "./features/maquinas.js";
 import { attachFormatting } from "./core/formatting.js";
 import { computeAll } from "./features/calc.js";
 import { inicializarHeaderCorporativo } from "./features/header.js";
 import { initThemeSwitcher } from "./features/theme.js";
 import { padronizarDropdowns, initFilialDropdown } from "./features/dropdowns.js";
-import { setMaquinas, setParcelas } from "./core/state.js";
+import { setMaquinas } from "./core/state.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-
-  // inicia parcelas
-  updateParcelas();
 
   // inicia máquinas
   setMaquinas([]);
@@ -18,26 +21,69 @@ document.addEventListener("DOMContentLoaded", () => {
   attachFormatting();
   computeAll();
 
-  // evento global de recálculo
-  document.addEventListener("recompute", computeAll);
-
   // botão adicionar máquina
-  const btnAddMaquina = document.getElementById("btnAddMaquina");
-  if (btnAddMaquina) btnAddMaquina.addEventListener("click", addMaquinaEmpty);
+  document.getElementById("btnAddMaquina")?.addEventListener("click", addMaquinaEmpty);
 
-  // reset geral
-  const resetBtn = document.getElementById("resetBtn");
-  if (resetBtn) resetBtn.addEventListener("click", () => {
-    setParcelas([]);
-    setMaquinas([]);
-    document.getElementById("parcelasList").innerHTML = "";
-    document.getElementById("maquinasList").innerHTML = "";
-    updateParcelas();
-    computeAll();
-  });
+  // =============================
+  //     SWITCH TIPO DE VENDA
+  // =============================
+  const tipoVendaSelect = document.getElementById("TipoVenda");
+  const qtdParcelasInput = document.getElementById("qtdParcelas");
+
+  function handleVendaFinanciada() {
+    qtdParcelasInput.disabled = false;
+    qtdParcelasInput.value = "";
+
+    limparParcelas();
+
+    // quando o usuário digitar quantidade → gerar entrada + parcelas
+    qtdParcelasInput.oninput = () => {
+      limparParcelas();
+
+      const qtd = parseInt(qtdParcelasInput.value);
+      if (!isNaN(qtd) && qtd > 0) {
+        gerarEntradaMaisParcelas(qtd);
+      }
+    };
+  }
+
+  function handleVendaAvista() {
+    qtdParcelasInput.disabled = true;
+    qtdParcelasInput.value = 1;
+
+    limparParcelas();
+    adicionarParcelaAvista();
+  }
+
+  if (tipoVendaSelect) {
+    tipoVendaSelect.addEventListener("change", () => {
+      const tipo = tipoVendaSelect.value;
+
+      switch (tipo) {
+        case "VendaFinanciada":
+          handleVendaFinanciada();
+          break;
+
+        case "VendaVista":
+        case "VendaPublica":
+        case "Consorcio":
+        case "CartaoBNDES":
+        case "Car":
+        case "ADefinir":
+        default:
+          handleVendaAvista();
+          break;
+      }
+    });
+
+    // executa comportamento inicial
+    tipoVendaSelect.dispatchEvent(new Event("change"));
+  }
 
   inicializarHeaderCorporativo();
   padronizarDropdowns();
   initThemeSwitcher();
   initFilialDropdown();
+
+  document.addEventListener("recompute", computeAll);
 });
