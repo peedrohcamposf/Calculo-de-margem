@@ -1,51 +1,143 @@
-import { parseBrazilNumber, formatBrazilNumber, safeDiv } from "../utils/numbers.js";
-import { parcelas, maquinas } from "../core/state.js";
+// js/features/calc.js
+import { parseBrazilNumber, formatBrazilNumber } from "../utils/numbers.js";
 
-/**
- * computeAll: faz cálculos seguros sem depender de ids que não existem.
- * - Para parcelas: calcula juros = valor * (jurosPercent/100)
- *   e VPL = valor - juros (exemplo simples). Ajuste conforme regra real.
- * - Para máquinas: atualmente não realiza cálculos complexos (preserva estabilidade).
- */
-export function computeAll() {
-  // === Parcelas ===
-  const parcelaRows = Array.from(document.querySelectorAll("#parcelasList .cheader"));
-  parcelaRows.forEach((rowEl, idx) => {
-    // os inputs na ordem no renderParcelas são:
-    // [0] label, [1] dias1 (readonly), [2] valor, [3] percentual, [4] dias2, [5] jurosPercent, [6] vpl, [7] juros
-    const inputs = Array.from(rowEl.querySelectorAll(".col-header input"));
-    if (inputs.length < 7) return;
+/* Sum all machines values: valorVenda * quantidade for every row */
+function getTotalMachinesValue() {
+  const rows = Array.from(document.querySelectorAll(".maquina-row"));
+  let total = 0;
+  rows.forEach(row => {
+    const valEl = row.querySelector('input[data-field="Q"]');
+    const qtdEl = row.querySelector('input[data-field="N"]');
 
-    const valor = parseBrazilNumber(inputs[2]?.value) || 0;
-    const jurosPercent = parseBrazilNumber(inputs[5]?.value) || 0;
-
-    const juros = (valor * jurosPercent) / 100;
-    const vpl = valor - juros;
-
-    if (inputs[6]) inputs[6].value = formatBrazilNumber(vpl);
-    if (inputs[7]) inputs[7].value = formatBrazilNumber(juros);
+    const valor = parseBrazilNumber(valEl?.value || "");
+    const qtd = parseBrazilNumber(qtdEl?.value || "");
+    total += (valor * qtd);
   });
+  return total;
+}
 
-  // === Máquinas ===
-  // Não há IDs padronizados; para estabilidade apenas percorremos e evitamos exceptions.
-  const maquinasRows = Array.from(document.querySelectorAll(".maquina-row"));
-  maquinasRows.forEach((rowEl, idx) => {
-    // Exemplo seguro: se houver campo de quantidade e valor, você pode calcular total
-    try {
-      const valorInput = rowEl.querySelector('input[data-field="Q"]');
-      const quantInput = rowEl.querySelector('input[data-field="N"]');
-      const totalEl = rowEl.querySelector('.inpValorCompra');
+function fmtMoney(n) {
+  return formatBrazilNumber(isNaN(n) ? 0 : n) + " R$";
+}
+function fmtPercent(n) {
+  return formatBrazilNumber(isNaN(n) ? 0 : n) + "%";
+}
+function fmtInt(n) {
+  return String(isNaN(n) ? 0 : Math.round(n));
+}
 
-      const valor = parseBrazilNumber(valorInput?.value) || 0;
-      const qtd = parseBrazilNumber(quantInput?.value) || 0;
+export function computeAll() {
+  const total = getTotalMachinesValue() || 0;
 
-      // exemplo: se quiser preencher valorCompra com valor * qtd:
-      if (totalEl && !isNaN(valor) && !isNaN(qtd)) {
-        totalEl.value = formatBrazilNumber(valor * qtd);
+  const jurosRaw = document.getElementById("Juros_taxa")?.value || "";
+  const jurosTaxa = (parseBrazilNumber(jurosRaw) || 0) / 100;
+
+  const list = document.getElementById("parcelasList");
+  if (!list) return;
+
+  const rows = Array.from(list.querySelectorAll(".cheader"));
+  if (!rows.length) return;
+
+  const parcelaRows = rows.filter(r => r.dataset.row !== "0");
+  const qtdParcelas = parcelaRows.length;
+
+  const v0 = document.getElementById("parcela_valor_0");
+  const p0 = document.getElementById("parcela_percentual_0");
+
+  const rawVal = v0?.value.replace(/R\$|%/g, "").trim() || "";
+  const rawPerc = p0?.value.replace(/R\$|%/g, "").trim() || "";
+
+  const parsedVal = parseBrazilNumber(rawVal);
+  const parsedPerc = parseBrazilNumber(rawPerc);
+
+  const active = document.activeElement?.id;
+
+  let entradaVal = 0;
+  let entradaPerc = 0;
+
+  if (active === "parcela_valor_0" && rawVal !== "") {
+    entradaVal = parsedVal;
+    entradaPerc = total ? (entradaVal / total * 100) : 0;
+  } else if (active === "parcela_percentual_0" && rawPerc !== "") {
+    entradaPerc = parsedPerc;
+    entradaVal = (entradaPerc / 100) * total;
+  } else {
+    if (rawVal !== "") {
+      entradaVal = parsedVal;
+      entradaPerc = total ? (entradaVal / total * 100) : 0;
+    } else if (rawPerc !== "") {
+      entradaPerc = parsedPerc;
+      entradaVal = (entradaPerc / 100) * total;
+    }
+  }
+
+  if (entradaVal > total) { entradaVal = total; entradaPerc = 100; }
+  if (entradaPerc > 100) entradaPerc = 100;
+
+  let restante = Math.max(0, total - entradaVal);
+  const valorParcela = qtdParcelas ? (restante / qtdParcelas) : 0;
+
+  let vplTotal = 0;
+
+  rows.forEach(div => {
+    const rid = String(div.dataset.row);
+    const isEntrada = rid === "0";
+
+    const valEl = document.getElementById(`parcela_valor_${rid}`);
+    const percEl = document.getElementById(`parcela_percentual_${rid}`);
+    const diasEl = document.getElementById(`parcela_dias1_${rid}`);
+    const restanteEl = document.getElementById(`parcela_restante_${rid}`);
+    const perdaEl = document.getElementById(`parcela_perda_${rid}`);
+    const vplEl = document.getElementById(`parcela_vpl_${rid}`);
+    const jurosEl = document.getElementById(`parcela_juros_${rid}`);
+
+    if (isEntrada) {
+      if (document.activeElement?.id !== `parcela_valor_0`) {
+        valEl.value = entradaVal ? fmtMoney(entradaVal) : "";
       }
-    } catch (err) {
-      // nunca lançar: manter computeAll resiliente
-      // console.debug("computeAll (maquinas) safe-catch:", err);
+      if (document.activeElement?.id !== `parcela_percentual_0`) {
+        percEl.value = entradaPerc ? fmtPercent(entradaPerc) : "";
+      }
+
+      restante = Math.max(0, total - entradaVal);
+      restanteEl.value = restante ? fmtMoney(restante) : "";
+
+      const dias = parseInt(diasEl?.value) || 0;
+      diasEl.value = String(dias);
+
+      const perda = Math.pow(1 + jurosTaxa, (dias/30)) - 1;
+      perdaEl.value = perda ? fmtPercent(perda*100) : "";
+
+      const vpl = entradaVal - (entradaVal * perda);
+      vplEl.value = vpl ? fmtMoney(vpl) : "";
+      jurosEl.value = (entradaVal && vpl) ? fmtMoney(entradaVal - vpl) : "";
+
+      if (vpl) vplTotal += vpl;
+    } else {
+      const v = valorParcela;
+      valEl.value = v ? fmtMoney(v) : "";
+
+      const perc = total ? (v / total * 100) : 0;
+      percEl.value = perc ? fmtPercent(perc) : "";
+
+      const dias = parseInt(diasEl?.value) || (30 * Number(rid));
+      diasEl.value = String(dias);
+
+      restante = Math.max(0, restante - v);
+      restanteEl.value = restante ? fmtMoney(restante) : "";
+
+      const perda = Math.pow(1 + jurosTaxa, (dias/30)) - 1;
+      perdaEl.value = perda ? fmtPercent(perda*100) : "";
+
+      const vpl = v - (v * perda);
+      vplEl.value = vpl ? fmtMoney(vpl) : "";
+      jurosEl.value = (v && vpl) ? fmtMoney(v - vpl) : "";
+
+      if (vpl) vplTotal += vpl;
     }
   });
+
+  const jurosTotal = total - vplTotal;
+  const totalJurosEl = document.getElementById("parcelas_juros_total");
+  if (totalJurosEl) totalJurosEl.value = jurosTotal ? fmtMoney(jurosTotal) : "";
 }

@@ -1,8 +1,7 @@
 import { 
-    limparParcelas, 
-    gerarParcelasNormais, 
-    adicionarParcelaAvista,
-    gerarEntradaMaisParcelas 
+  limparParcelas, 
+  gerarEntradaMaisParcelas, 
+  adicionarParcelaAvista
 } from "./features/parcelas.js";
 
 import { renderMaquinas, addMaquinaEmpty } from "./features/maquinas.js";
@@ -24,42 +23,66 @@ document.addEventListener("DOMContentLoaded", () => {
   // botão adicionar máquina
   document.getElementById("btnAddMaquina")?.addEventListener("click", addMaquinaEmpty);
 
-  // =============================
-  //     SWITCH TIPO DE VENDA
-  // =============================
+  // ============================================
+  //     SWITCH TIPO DE VENDA + PARCELAS
+  // ============================================
   const tipoVendaSelect = document.getElementById("TipoVenda");
-  const qtdParcelasInput = document.getElementById("qtdParcelas");
+  let qtdParcelasInput = document.getElementById("qtdParcelas");
 
-  function handleVendaFinanciada() {
-    qtdParcelasInput.disabled = false;
-    qtdParcelasInput.value = "";
+  // 🔄 Recria o input e sempre recoloca listener
+  function resetQtdParcelasInput() {
+    const novo = qtdParcelasInput.cloneNode(true);
+    qtdParcelasInput.parentNode.replaceChild(novo, qtdParcelasInput);
+    qtdParcelasInput = novo;
 
-    limparParcelas();
-
-    // quando o usuário digitar quantidade → gerar entrada + parcelas
-    qtdParcelasInput.oninput = () => {
-      limparParcelas();
-
-      const qtd = parseInt(qtdParcelasInput.value);
-      if (!isNaN(qtd) && qtd > 0) {
-        gerarEntradaMaisParcelas(qtd);
-      }
-    };
+    // SEMPRE reanexa listener aqui
+    qtdParcelasInput.addEventListener("input", atualizarParcelas);
   }
 
+  // 🔥 Atualiza parcelas conforme digitado
+  function atualizarParcelas() {
+    const valor = qtdParcelasInput.value.trim();
+
+    if (valor === "") {
+      limparParcelas();
+      return;
+    }
+
+    const numero = parseInt(valor);
+
+    if (isNaN(numero) || numero <= 0) {
+      limparParcelas();
+      return;
+    }
+
+    if (tipoVendaSelect.value === "VendaFinanciada") {
+      gerarEntradaMaisParcelas(numero);
+    } else {
+      adicionarParcelaAvista();
+    }
+  }
+
+  // 🔵 Venda financiada
+  function handleVendaFinanciada() {
+    resetQtdParcelasInput();
+    qtdParcelasInput.disabled = false;
+    qtdParcelasInput.value = "";
+    limparParcelas();
+  }
+
+  // 🟢 Venda à vista e demais tipos
   function handleVendaAvista() {
+    resetQtdParcelasInput();
     qtdParcelasInput.disabled = true;
     qtdParcelasInput.value = 1;
-
     limparParcelas();
     adicionarParcelaAvista();
   }
 
+  // Listener principal de troca de tipo
   if (tipoVendaSelect) {
     tipoVendaSelect.addEventListener("change", () => {
-      const tipo = tipoVendaSelect.value;
-
-      switch (tipo) {
+      switch (tipoVendaSelect.value) {
         case "VendaFinanciada":
           handleVendaFinanciada();
           break;
@@ -76,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // executa comportamento inicial
+    // comportamento inicial
     tipoVendaSelect.dispatchEvent(new Event("change"));
   }
 

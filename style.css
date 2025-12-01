@@ -50,6 +50,11 @@ body {
   overflow: hidden;
 }
 
+.form-control{
+  font-size: 12px;
+  align-items: center;
+}
+
 /* ===== Section titles ===== */
 .section-title {
   font-size: 1.05rem;
