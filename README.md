@@ -1,0 +1,1 @@
+Projeto GB, Calculo de margem
