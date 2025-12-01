@@ -91,6 +91,61 @@ function debounce(fn, delay = 150) {
 }
 
 /* ======================================================
+   FUNÇÕES NOVAS: seleção automática
+   ====================================================== */
+
+// tenta identificar se usuário digitou valor exato
+function tryAutoSelectExactMatch(input, value, options, row) {
+  if (!value) return false;
+
+  const exact = options.find(opt => opt.toLowerCase() === value.toLowerCase());
+  if (!exact) return false;
+
+  input.value = exact;
+
+  // ativa preenchimento inteligente
+  triggerCascade(input, row);
+
+  return true;
+}
+
+function triggerCascade(input, row) {
+  const field = input.classList.contains("inpMarca") ? "marca"
+            : input.classList.contains("inpTipo") ? "tipo"
+            : input.classList.contains("inpModelo") ? "modelo"
+            : input.classList.contains("inpCodigo") ? "codigo"
+            : null;
+
+  if (!field) return;
+
+  const marca = row.querySelector(".inpMarca");
+  const tipo = row.querySelector(".inpTipo");
+  const modelo = row.querySelector(".inpModelo");
+  const codigo = row.querySelector(".inpCodigo");
+  const valor = row.querySelector(".inpValorCompra");
+
+  const txt = input.value;
+
+  if (field === "codigo" && mapCodigo.has(txt)) {
+    const m = mapCodigo.get(txt);
+    marca.value = m.marca;
+    tipo.value = m.tipo;
+    modelo.value = m.modelo;
+    codigo.value = m.codigo;
+    valor.value = m.valorCompra;
+  }
+
+  if (field === "modelo" && mapModelo.has(txt)) {
+    const m = mapModelo.get(txt);
+    marca.value = m.marca;
+    tipo.value = m.tipo;
+    modelo.value = m.modelo;
+    codigo.value = m.codigo;
+    valor.value = m.valorCompra;
+  }
+}
+
+/* ======================================================
    AUTOCOMPLETE PRINCIPAL
    ====================================================== */
 
@@ -108,7 +163,7 @@ export function attachAutocompleteToRow(row) {
     modelo.value = "";
     codigo.value = "";
     valor.value = "";
-  });
+  }, row);
 
   // Tipo
   autocompleteCampo(tipo, txt => filtrarTipos(marca.value, txt), item => {
@@ -118,7 +173,7 @@ export function attachAutocompleteToRow(row) {
     modelo.value = "";
     codigo.value = "";
     valor.value = "";
-  });
+  }, row);
 
   // Modelo
   autocompleteCampo(modelo, txt => filtrarModelos(marca.value, tipo.value, txt), item => {
@@ -130,7 +185,7 @@ export function attachAutocompleteToRow(row) {
       codigo.value = obj.codigo;
       valor.value = obj.valorCompra;
     }
-  });
+  }, row);
 
   // Código
   autocompleteCampo(codigo, txt => filtrarCodigos(marca.value, tipo.value, txt), item => {
@@ -142,60 +197,82 @@ export function attachAutocompleteToRow(row) {
       codigo.value = obj.codigo;
       valor.value = obj.valorCompra;
     }
-  });
+  }, row);
 }
 
 /* ======================================================
-   AUTOCOMPLETE VISUAL (usa document.body para o dropdown)
+   AUTOCOMPLETE VISUAL
    ====================================================== */
 
-function autocompleteCampo(input, fnLista, onSelect) {
+function autocompleteCampo(input, fnLista, onSelect, row) {
   let selIndex = -1;
-  let currentBox = null;
 
   const handler = debounce(() => {
-    if (!input || input.value.trim() === "") {
+    if (!input.value.trim()) {
       fecharSugestoes();
       return;
     }
+
     const lista = fnLista(input.value);
-    abrirSugestoes(input, lista, onSelect);
+
+    // 🚀 tentativa automática de match exato ANTES de mostrar dropdown
+    if (tryAutoSelectExactMatch(input, input.value.trim(), lista, row)) {
+      fecharSugestoes();
+      return;
+    }
+
+    abrirSugestoes(input, lista, item => {
+      onSelect(item);
+      fecharSugestoes();
+    });
+
     selIndex = -1;
   });
 
   input.addEventListener("input", handler);
 
   input.addEventListener("keydown", e => {
-    const box = currentBox || document.querySelector(".suggestions-box");
-    if (!box) return;
+    const box = document.querySelector(".suggestions-box");
+    const itens = box ? [...box.querySelectorAll(".suggestion-item")] : [];
 
-    const itens = [...box.querySelectorAll(".suggestion-item")].filter(i => !i.classList.contains("no-match"));
-    if (!itens.length) return;
-
-    if (e.key === "ArrowDown") {
+    if (e.key === "ArrowDown" && itens.length) {
       e.preventDefault();
       selIndex = (selIndex + 1) % itens.length;
       destacar(itens, selIndex);
-    } else if (e.key === "ArrowUp") {
+      return;
+    }
+
+    if (e.key === "ArrowUp" && itens.length) {
       e.preventDefault();
       selIndex = (selIndex - 1 + itens.length) % itens.length;
       destacar(itens, selIndex);
-    } else if (e.key === "Enter") {
-      if (selIndex >= 0) {
-        e.preventDefault();
+      return;
+    }
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      // ENTER → seleciona item destacado
+      if (selIndex >= 0 && itens[selIndex]) {
         itens[selIndex].click();
+        return;
       }
-    } else if (e.key === "Escape") {
+
+      // ENTER → tenta seleção automática (digitado exato)
+      const lista = fnLista(input.value);
+      if (tryAutoSelectExactMatch(input, input.value.trim(), lista, row)) {
+        fecharSugestoes();
+        return;
+      }
+    }
+
+    if (e.key === "Escape") {
       fecharSugestoes();
     }
   });
-
-  // fecha em scroll/resize para evitar dropdown fora do lugar
-  window.addEventListener("scroll", () => fecharSugestoes(), true);
-  window.addEventListener("resize", () => fecharSugestoes());
 }
 
-function abrirSugestoes(input, lista, onSelect) {
+function abrirSugestoes(input, lista, callback) {
   fecharSugestoes();
 
   const box = document.createElement("div");
@@ -206,42 +283,30 @@ function abrirSugestoes(input, lista, onSelect) {
     d.className = "suggestion-item no-match";
     d.innerText = "Nenhum resultado";
     box.appendChild(d);
-    document.body.appendChild(box);
-    posicionarBox(input, box);
-    window.__currentSuggestionsBox = box;
-    return;
+  } else {
+    lista.forEach(item => {
+      const el = document.createElement("div");
+      el.className = "suggestion-item";
+      el.textContent = item;
+      el.onclick = () => callback(item);
+      box.appendChild(el);
+    });
   }
-
-  lista.forEach(item => {
-    const el = document.createElement("div");
-    el.className = "suggestion-item";
-    el.textContent = item;
-
-    el.onclick = () => {
-      onSelect(item);
-      fecharSugestoes();
-    };
-
-    box.appendChild(el);
-  });
 
   document.body.appendChild(box);
   posicionarBox(input, box);
-  window.__currentSuggestionsBox = box;
 }
 
 function posicionarBox(input, box) {
-  const rect = input.getBoundingClientRect();
-  box.style.left = Math.round(rect.left) + "px";
-  box.style.top = Math.round(rect.bottom) + "px";
-  box.style.width = Math.round(rect.width) + "px";
-  box.style.maxHeight = "300px";
+  const r = input.getBoundingClientRect();
+  box.style.left = r.left + "px";
+  box.style.top = r.bottom + "px";
+  box.style.width = r.width + "px";
   box.style.position = "fixed";
 }
 
 function fecharSugestoes() {
   document.querySelectorAll(".suggestions-box").forEach(b => b.remove());
-  window.__currentSuggestionsBox = null;
 }
 
 function destacar(itens, idx) {
