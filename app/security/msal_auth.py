@@ -180,8 +180,9 @@ def _get_cargo_from_ad(result: dict[str, Any], claims: dict[str, Any]) -> str | 
     return _fetch_cargo_from_graph(access_token)
 
 
-# Tela de login apenas para renreziação do template
-@auth_bp.get("/login-page")
+# Tela de login apenas para renderização do template
+@auth_bp.route("/login-page", methods=["GET"], strict_slashes=False)
+@limiter.limit(LOGIN_RATE_LIMIT)
 def login_page():
     if current_user.is_authenticated:
         return _redirect_home()
@@ -385,8 +386,8 @@ def callback():
     else:
         flash("Login realizado com sucesso.", "success")
 
-    # Trata ?next=...
-    next_url = request.args.get("next")
+    # Trata o redirecionamento após o login
+    next_url = session.pop("post_login_next", None) or request.args.get("next")
     if next_url and _is_safe_next_url(next_url):
         return redirect(next_url)
 
