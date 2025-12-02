@@ -1,6 +1,6 @@
 -- Cliente (mestre SAP)
-CREATE TABLE dbo.tb_margem_cliente (
-    id_cliente        BIGINT IDENTITY(1,1) CONSTRAINT PK_tb_margem_cliente PRIMARY KEY,
+CREATE TABLE dbo.tb_cm_margem_cliente (
+    id_cliente        BIGINT IDENTITY(1,1) CONSTRAINT PK_tb_cm_margem_cliente PRIMARY KEY,
     codigo_sap        NVARCHAR(20)  NOT NULL,
     razao_social      NVARCHAR(200) NOT NULL,
     razao_social_ci   AS UPPER(razao_social) COLLATE Latin1_General_CI_AI PERSISTED,
@@ -11,17 +11,17 @@ CREATE TABLE dbo.tb_margem_cliente (
     ativo             BIT           NOT NULL DEFAULT (1),
     created_at        DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
     updated_at        DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT UQ_tb_margem_cliente_codigo_sap UNIQUE (codigo_sap)
+    CONSTRAINT UQ_tb_cm_margem_cliente_codigo_sap UNIQUE (codigo_sap)
 );
 GO
 
-CREATE INDEX IX_tb_margem_cliente_razao_ci  ON dbo.tb_margem_cliente (razao_social_ci);
-CREATE INDEX IX_tb_margem_cliente_email_low ON dbo.tb_margem_cliente (email);
+CREATE INDEX IX_tb_cm_margem_cliente_razao_ci  ON dbo.tb_cm_margem_cliente (razao_social_ci);
+CREATE INDEX IX_tb_cm_margem_cliente_email_low ON dbo.tb_cm_margem_cliente (email);
 GO
 
 -- Filial (mestre SAP)
-CREATE TABLE dbo.tb_margem_filial (
-    id_filial    INT IDENTITY(1,1) CONSTRAINT PK_tb_margem_filial PRIMARY KEY,
+CREATE TABLE dbo.tb_cm_margem_filial (
+    id_filial    INT IDENTITY(1,1) CONSTRAINT PK_tb_cm_margem_filial PRIMARY KEY,
     codigo_sap   NVARCHAR(10)  NOT NULL,
     nome         NVARCHAR(120) NOT NULL,
     nome_ci      AS UPPER(nome) COLLATE Latin1_General_CI_AI PERSISTED,
@@ -30,16 +30,16 @@ CREATE TABLE dbo.tb_margem_filial (
     ativo        BIT           NOT NULL DEFAULT (1),
     created_at   DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
     updated_at   DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT UQ_tb_margem_filial_codigo_sap UNIQUE (codigo_sap)
+    CONSTRAINT UQ_tb_cm_margem_filial_codigo_sap UNIQUE (codigo_sap)
 );
 GO
 
-CREATE INDEX IX_tb_margem_filial_nome_ci ON dbo.tb_margem_filial (nome_ci);
+CREATE INDEX IX_tb_cm_margem_filial_nome_ci ON dbo.tb_cm_margem_filial (nome_ci);
 GO
 
 -- Produto / Modelo (mestre SAP)
-CREATE TABLE dbo.tb_margem_produto (
-    id_produto    BIGINT IDENTITY(1,1) CONSTRAINT PK_tb_margem_produto PRIMARY KEY,
+CREATE TABLE dbo.tb_cm_margem_produto (
+    id_produto    BIGINT IDENTITY(1,1) CONSTRAINT PK_tb_cm_margem_produto PRIMARY KEY,
     codigo_sap    NVARCHAR(40)  NOT NULL,
     descricao     NVARCHAR(200) NOT NULL,
     descricao_ci  AS UPPER(descricao) COLLATE Latin1_General_CI_AI PERSISTED,
@@ -49,16 +49,16 @@ CREATE TABLE dbo.tb_margem_produto (
     ativo         BIT           NOT NULL DEFAULT (1),
     created_at    DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
     updated_at    DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT UQ_tb_margem_produto_codigo_sap UNIQUE (codigo_sap)
+    CONSTRAINT UQ_tb_cm_margem_produto_codigo_sap UNIQUE (codigo_sap)
 );
 GO
 
-CREATE INDEX IX_tb_margem_produto_desc_ci ON dbo.tb_margem_produto (descricao_ci);
+CREATE INDEX IX_tb_cm_margem_produto_desc_ci ON dbo.tb_cm_margem_produto (descricao_ci);
 GO
 
 -- Vendedor (mestre SAP / força de vendas)
-CREATE TABLE dbo.tb_margem_vendedor (
-    id_vendedor   INT IDENTITY(1,1) CONSTRAINT PK_tb_margem_vendedor PRIMARY KEY,
+CREATE TABLE dbo.tb_cm_margem_vendedor (
+    id_vendedor   INT IDENTITY(1,1) CONSTRAINT PK_tb_cm_margem_vendedor PRIMARY KEY,
     codigo_sap    NVARCHAR(20)  NOT NULL,
     nome          NVARCHAR(150) NOT NULL,
     nome_ci       AS UPPER(nome) COLLATE Latin1_General_CI_AI PERSISTED,
@@ -67,19 +67,19 @@ CREATE TABLE dbo.tb_margem_vendedor (
     ativo         BIT           NOT NULL DEFAULT (1),
     created_at    DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
     updated_at    DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT UQ_tb_margem_vendedor_codigo_sap UNIQUE (codigo_sap),
-    CONSTRAINT FK_tb_margem_vendedor_filial
-        FOREIGN KEY (id_filial) REFERENCES dbo.tb_margem_filial (id_filial)
+    CONSTRAINT UQ_tb_cm_margem_vendedor_codigo_sap UNIQUE (codigo_sap),
+    CONSTRAINT FK_tb_cm_margem_vendedor_filial
+        FOREIGN KEY (id_filial) REFERENCES dbo.tb_cm_margem_filial (id_filial)
 );
 GO
 
-CREATE INDEX IX_tb_margem_vendedor_nome_ci   ON dbo.tb_margem_vendedor (nome_ci);
-CREATE INDEX IX_tb_margem_vendedor_email_low ON dbo.tb_margem_vendedor (email);
+CREATE INDEX IX_tb_cm_margem_vendedor_nome_ci   ON dbo.tb_cm_margem_vendedor (nome_ci);
+CREATE INDEX IX_tb_cm_margem_vendedor_email_low ON dbo.tb_cm_margem_vendedor (email);
 GO
 
 -- Usuário (Azure AD)
-CREATE TABLE dbo.tb_margem_usuario (
-    id_usuario          INT IDENTITY(1,1) CONSTRAINT PK_tb_margem_usuario PRIMARY KEY,
+CREATE TABLE dbo.tb_cm_margem_usuario (
+    id_usuario          INT IDENTITY(1,1) CONSTRAINT PK_tb_cm_margem_usuario PRIMARY KEY,
     azure_oid           NVARCHAR(64)  NOT NULL,
     email_login         NVARCHAR(254) NOT NULL,
     nome                NVARCHAR(150) NULL,
@@ -88,16 +88,16 @@ CREATE TABLE dbo.tb_margem_usuario (
     ativo               BIT           NOT NULL DEFAULT (1),
     created_at          DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
     updated_at          DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT UQ_tb_margem_usuario_azure_oid       UNIQUE (azure_oid),
-    CONSTRAINT UQ_tb_margem_usuario_email_login_low UNIQUE (email_login),
-    CONSTRAINT FK_tb_margem_usuario_vendedor
-        FOREIGN KEY (id_vendedor) REFERENCES dbo.tb_margem_vendedor (id_vendedor)
+    CONSTRAINT UQ_tb_cm_margem_usuario_azure_oid       UNIQUE (azure_oid),
+    CONSTRAINT UQ_tb_cm_margem_usuario_email_login_low UNIQUE (email_login),
+    CONSTRAINT FK_tb_cm_margem_usuario_vendedor
+        FOREIGN KEY (id_vendedor) REFERENCES dbo.tb_cm_margem_vendedor (id_vendedor)
 );
 GO
 
 -- Tipo de venda
-CREATE TABLE dbo.tb_margem_tipo_venda (
-    id_tipo_venda  SMALLINT IDENTITY(1,1) CONSTRAINT PK_tb_margem_tipo_venda PRIMARY KEY,
+CREATE TABLE dbo.tb_cm_margem_tipo_venda (
+    id_tipo_venda  SMALLINT IDENTITY(1,1) CONSTRAINT PK_tb_cm_margem_tipo_venda PRIMARY KEY,
     nome           NVARCHAR(80) NOT NULL,
     codigo_interno NVARCHAR(20) NULL,
     flag_financiado   BIT       NOT NULL DEFAULT (0),
@@ -105,25 +105,25 @@ CREATE TABLE dbo.tb_margem_tipo_venda (
     ativo          BIT          NOT NULL DEFAULT (1),
     created_at     DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
     updated_at     DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT UQ_tb_margem_tipo_venda_nome UNIQUE (nome)
+    CONSTRAINT UQ_tb_cm_margem_tipo_venda_nome UNIQUE (nome)
 );
 GO
 
 -- Modalidade de financiamento
-CREATE TABLE dbo.tb_margem_modalidade_financiamento (
-    id_modalidade_fin SMALLINT IDENTITY(1,1) CONSTRAINT PK_tb_margem_modalidade_fin PRIMARY KEY,
+CREATE TABLE dbo.tb_cm_margem_modalidade_financiamento (
+    id_modalidade_fin SMALLINT IDENTITY(1,1) CONSTRAINT PK_tb_cm_margem_modalidade_fin PRIMARY KEY,
     nome              NVARCHAR(80) NOT NULL,
     codigo_interno    NVARCHAR(20) NULL,
     ativo             BIT          NOT NULL DEFAULT (1),
     created_at        DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
     updated_at        DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT UQ_tb_margem_modalidade_fin_nome UNIQUE (nome)
+    CONSTRAINT UQ_tb_cm_margem_modalidade_fin_nome UNIQUE (nome)
 );
 GO
 
 -- Banco financiador
-CREATE TABLE dbo.tb_margem_banco_financiador (
-    id_banco_financiador INT IDENTITY(1,1) CONSTRAINT PK_tb_margem_banco_financiador PRIMARY KEY,
+CREATE TABLE dbo.tb_cm_margem_banco_financiador (
+    id_banco_financiador INT IDENTITY(1,1) CONSTRAINT PK_tb_cm_margem_banco_financiador PRIMARY KEY,
     codigo_sap           NVARCHAR(10)  NULL,
     nome                 NVARCHAR(120) NOT NULL,
     ativo                BIT           NOT NULL DEFAULT (1),
@@ -132,13 +132,13 @@ CREATE TABLE dbo.tb_margem_banco_financiador (
 );
 GO
 
-CREATE UNIQUE INDEX UQ_tb_margem_banco_financiador_nome
-    ON dbo.tb_margem_banco_financiador (nome);
+CREATE UNIQUE INDEX UQ_tb_cm_margem_banco_financiador_nome
+    ON dbo.tb_cm_margem_banco_financiador (nome);
 GO
 
 -- Configuração de Desconto Negociado (DE PARA)
-CREATE TABLE dbo.tb_margem_config_dn (
-    id_dn                  BIGINT IDENTITY(1,1) CONSTRAINT PK_tb_margem_config_dn PRIMARY KEY,
+CREATE TABLE dbo.tb_cm_margem_config_dn (
+    id_dn                  BIGINT IDENTITY(1,1) CONSTRAINT PK_tb_cm_margem_config_dn PRIMARY KEY,
     id_produto             BIGINT      NOT NULL,
     id_filial              INT         NOT NULL,
     id_tipo_venda          SMALLINT    NOT NULL,
@@ -153,21 +153,21 @@ CREATE TABLE dbo.tb_margem_config_dn (
     mes_zero               AS ISNULL(mes, 0) PERSISTED,
     created_at             DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
     updated_at             DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT FK_tb_margem_config_dn_produto
-        FOREIGN KEY (id_produto)        REFERENCES dbo.tb_margem_produto (id_produto),
-    CONSTRAINT FK_tb_margem_config_dn_filial
-        FOREIGN KEY (id_filial)         REFERENCES dbo.tb_margem_filial (id_filial),
-    CONSTRAINT FK_tb_margem_config_dn_tipo_venda
-        FOREIGN KEY (id_tipo_venda)     REFERENCES dbo.tb_margem_tipo_venda (id_tipo_venda),
-    CONSTRAINT FK_tb_margem_config_dn_modalidade
-        FOREIGN KEY (id_modalidade_fin) REFERENCES dbo.tb_margem_modalidade_financiamento (id_modalidade_fin),
-    CONSTRAINT CK_tb_margem_config_dn_mes CHECK (mes IS NULL OR (mes BETWEEN 1 AND 12)),
-    CONSTRAINT CK_tb_margem_config_dn_ano CHECK (ano BETWEEN 2000 AND 2100)
+    CONSTRAINT FK_tb_cm_margem_config_dn_produto
+        FOREIGN KEY (id_produto)        REFERENCES dbo.tb_cm_margem_produto (id_produto),
+    CONSTRAINT FK_tb_cm_margem_config_dn_filial
+        FOREIGN KEY (id_filial)         REFERENCES dbo.tb_cm_margem_filial (id_filial),
+    CONSTRAINT FK_tb_cm_margem_config_dn_tipo_venda
+        FOREIGN KEY (id_tipo_venda)     REFERENCES dbo.tb_cm_margem_tipo_venda (id_tipo_venda),
+    CONSTRAINT FK_tb_cm_margem_config_dn_modalidade
+        FOREIGN KEY (id_modalidade_fin) REFERENCES dbo.tb_cm_margem_modalidade_financiamento (id_modalidade_fin),
+    CONSTRAINT CK_tb_cm_margem_config_dn_mes CHECK (mes IS NULL OR (mes BETWEEN 1 AND 12)),
+    CONSTRAINT CK_tb_cm_margem_config_dn_ano CHECK (ano BETWEEN 2000 AND 2100)
 );
 GO
 
-CREATE UNIQUE INDEX UQ_tb_margem_config_dn_chave
-    ON dbo.tb_margem_config_dn (
+CREATE UNIQUE INDEX UQ_tb_cm_margem_config_dn_chave
+    ON dbo.tb_cm_margem_config_dn (
         id_produto,
         id_filial,
         id_tipo_venda,
@@ -179,8 +179,8 @@ CREATE UNIQUE INDEX UQ_tb_margem_config_dn_chave
 GO
 
 -- Parâmetros Gerais (impostos, comissões, taxa, etc)
-CREATE TABLE dbo.tb_margem_parametro_geral (
-    id_parametro      INT IDENTITY(1,1) CONSTRAINT PK_tb_margem_parametro_geral PRIMARY KEY,
+CREATE TABLE dbo.tb_cm_margem_parametro_geral (
+    id_parametro      INT IDENTITY(1,1) CONSTRAINT PK_tb_cm_margem_parametro_geral PRIMARY KEY,
     codigo            NVARCHAR(50)  NOT NULL, -- Exemplo: ICMS_PIS_COFINS_COMPRA
     descricao         NVARCHAR(200) NULL,
     valor_decimal     DECIMAL(18,6) NULL,
@@ -193,22 +193,22 @@ CREATE TABLE dbo.tb_margem_parametro_geral (
     ativo             BIT           NOT NULL DEFAULT (1),
     created_at        DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
     updated_at        DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT FK_tb_margem_param_geral_filial
-        FOREIGN KEY (id_filial)         REFERENCES dbo.tb_margem_filial (id_filial),
-    CONSTRAINT FK_tb_margem_param_geral_tipo_venda
-        FOREIGN KEY (id_tipo_venda)     REFERENCES dbo.tb_margem_tipo_venda (id_tipo_venda),
-    CONSTRAINT FK_tb_margem_param_geral_modalidade
-        FOREIGN KEY (id_modalidade_fin) REFERENCES dbo.tb_margem_modalidade_financiamento (id_modalidade_fin)
+    CONSTRAINT FK_tb_cm_margem_param_geral_filial
+        FOREIGN KEY (id_filial)         REFERENCES dbo.tb_cm_margem_filial (id_filial),
+    CONSTRAINT FK_tb_cm_margem_param_geral_tipo_venda
+        FOREIGN KEY (id_tipo_venda)     REFERENCES dbo.tb_cm_margem_tipo_venda (id_tipo_venda),
+    CONSTRAINT FK_tb_cm_margem_param_geral_modalidade
+        FOREIGN KEY (id_modalidade_fin) REFERENCES dbo.tb_cm_margem_modalidade_financiamento (id_modalidade_fin)
 );
 GO
 
-CREATE INDEX IX_tb_margem_param_geral_codigo
-    ON dbo.tb_margem_parametro_geral (codigo, id_filial, id_tipo_venda, id_modalidade_fin, data_inicio);
+CREATE INDEX IX_tb_cm_margem_param_geral_codigo
+    ON dbo.tb_cm_margem_parametro_geral (codigo, id_filial, id_tipo_venda, id_modalidade_fin, data_inicio);
 GO
 
 -- Cabeçalho da reserva
-CREATE TABLE dbo.tb_margem_reserva (
-    id_reserva             BIGINT IDENTITY(1,1) CONSTRAINT PK_tb_margem_reserva PRIMARY KEY,
+CREATE TABLE dbo.tb_cm_margem_reserva (
+    id_reserva             BIGINT IDENTITY(1,1) CONSTRAINT PK_tb_cm_margem_reserva PRIMARY KEY,
     codigo_reserva         NVARCHAR(30)   NULL,
     id_cliente             BIGINT         NOT NULL,
     id_filial              INT            NOT NULL,
@@ -226,32 +226,32 @@ CREATE TABLE dbo.tb_margem_reserva (
     atualizado_por         INT            NULL,
     created_at             DATETIME2(0)   NOT NULL DEFAULT SYSUTCDATETIME(),
     updated_at             DATETIME2(0)   NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT FK_tb_margem_reserva_cliente
-        FOREIGN KEY (id_cliente)           REFERENCES dbo.tb_margem_cliente (id_cliente),
-    CONSTRAINT FK_tb_margem_reserva_filial
-        FOREIGN KEY (id_filial)            REFERENCES dbo.tb_margem_filial (id_filial),
-    CONSTRAINT FK_tb_margem_reserva_vendedor
-        FOREIGN KEY (id_vendedor)          REFERENCES dbo.tb_margem_vendedor (id_vendedor),
-    CONSTRAINT FK_tb_margem_reserva_tipo_venda
-        FOREIGN KEY (id_tipo_venda)        REFERENCES dbo.tb_margem_tipo_venda (id_tipo_venda),
-    CONSTRAINT FK_tb_margem_reserva_modalidade
-        FOREIGN KEY (id_modalidade_fin)    REFERENCES dbo.tb_margem_modalidade_financiamento (id_modalidade_fin),
-    CONSTRAINT FK_tb_margem_reserva_banco_fin
-        FOREIGN KEY (id_banco_financiador) REFERENCES dbo.tb_margem_banco_financiador (id_banco_financiador),
-    CONSTRAINT FK_tb_margem_reserva_criado_por
-        FOREIGN KEY (criado_por)           REFERENCES dbo.tb_margem_usuario (id_usuario),
-    CONSTRAINT FK_tb_margem_reserva_atualizado_por
-        FOREIGN KEY (atualizado_por)       REFERENCES dbo.tb_margem_usuario (id_usuario)
+    CONSTRAINT FK_tb_cm_margem_reserva_cliente
+        FOREIGN KEY (id_cliente)           REFERENCES dbo.tb_cm_margem_cliente (id_cliente),
+    CONSTRAINT FK_tb_cm_margem_reserva_filial
+        FOREIGN KEY (id_filial)            REFERENCES dbo.tb_cm_margem_filial (id_filial),
+    CONSTRAINT FK_tb_cm_margem_reserva_vendedor
+        FOREIGN KEY (id_vendedor)          REFERENCES dbo.tb_cm_margem_vendedor (id_vendedor),
+    CONSTRAINT FK_tb_cm_margem_reserva_tipo_venda
+        FOREIGN KEY (id_tipo_venda)        REFERENCES dbo.tb_cm_margem_tipo_venda (id_tipo_venda),
+    CONSTRAINT FK_tb_cm_margem_reserva_modalidade
+        FOREIGN KEY (id_modalidade_fin)    REFERENCES dbo.tb_cm_margem_modalidade_financiamento (id_modalidade_fin),
+    CONSTRAINT FK_tb_cm_margem_reserva_banco_fin
+        FOREIGN KEY (id_banco_financiador) REFERENCES dbo.tb_cm_margem_banco_financiador (id_banco_financiador),
+    CONSTRAINT FK_tb_cm_margem_reserva_criado_por
+        FOREIGN KEY (criado_por)           REFERENCES dbo.tb_cm_margem_usuario (id_usuario),
+    CONSTRAINT FK_tb_cm_margem_reserva_atualizado_por
+        FOREIGN KEY (atualizado_por)       REFERENCES dbo.tb_cm_margem_usuario (id_usuario)
 );
 GO
 
-CREATE INDEX IX_tb_margem_reserva_cliente  ON dbo.tb_margem_reserva (id_cliente, data_reserva);
-CREATE INDEX IX_tb_margem_reserva_filial   ON dbo.tb_margem_reserva (id_filial, data_reserva);
+CREATE INDEX IX_tb_cm_margem_reserva_cliente  ON dbo.tb_cm_margem_reserva (id_cliente, data_reserva);
+CREATE INDEX IX_tb_cm_margem_reserva_filial   ON dbo.tb_cm_margem_reserva (id_filial, data_reserva);
 GO
 
 -- Item da reserva (uma máquina / modelo)
-CREATE TABLE dbo.tb_margem_reserva_item (
-    id_reserva_item                 BIGINT IDENTITY(1,1) CONSTRAINT PK_tb_margem_reserva_item PRIMARY KEY,
+CREATE TABLE dbo.tb_cm_margem_reserva_item (
+    id_reserva_item                 BIGINT IDENTITY(1,1) CONSTRAINT PK_tb_cm_margem_reserva_item PRIMARY KEY,
     id_reserva                      BIGINT         NOT NULL,
     id_produto                      BIGINT         NOT NULL,
     id_dn                           BIGINT         NULL,  -- Referência da config de DN
@@ -284,14 +284,14 @@ CREATE TABLE dbo.tb_margem_reserva_item (
     margem_contrib_percent          DECIMAL(9,6)   NOT NULL DEFAULT (0),
     created_at                      DATETIME2(0)   NOT NULL DEFAULT SYSUTCDATETIME(),
     updated_at                      DATETIME2(0)   NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT FK_tb_margem_reserva_item_reserva
-        FOREIGN KEY (id_reserva) REFERENCES dbo.tb_margem_reserva (id_reserva),
-    CONSTRAINT FK_tb_margem_reserva_item_produto
-        FOREIGN KEY (id_produto) REFERENCES dbo.tb_margem_produto (id_produto),
-    CONSTRAINT FK_tb_margem_reserva_item_dn
-        FOREIGN KEY (id_dn)      REFERENCES dbo.tb_margem_config_dn (id_dn),
-    CONSTRAINT CK_tb_margem_reserva_item_qtd CHECK (quantidade > 0),
-    CONSTRAINT CK_tb_margem_reserva_item_perc CHECK (
+    CONSTRAINT FK_tb_cm_margem_reserva_item_reserva
+        FOREIGN KEY (id_reserva) REFERENCES dbo.tb_cm_margem_reserva (id_reserva),
+    CONSTRAINT FK_tb_cm_margem_reserva_item_produto
+        FOREIGN KEY (id_produto) REFERENCES dbo.tb_cm_margem_produto (id_produto),
+    CONSTRAINT FK_tb_cm_margem_reserva_item_dn
+        FOREIGN KEY (id_dn)      REFERENCES dbo.tb_cm_margem_config_dn (id_dn),
+    CONSTRAINT CK_tb_cm_margem_reserva_item_qtd CHECK (quantidade > 0),
+    CONSTRAINT CK_tb_cm_margem_reserva_item_perc CHECK (
         impostos_venda_percent          BETWEEN 0 AND 1 AND
         impostos_compra_percent_icms_piscofins BETWEEN 0 AND 1 AND
         impostos_compra_percent_piscofins      BETWEEN 0 AND 1 AND
@@ -303,13 +303,13 @@ CREATE TABLE dbo.tb_margem_reserva_item (
 );
 GO
 
-CREATE INDEX IX_tb_margem_reserva_item_reserva ON dbo.tb_margem_reserva_item (id_reserva);
+CREATE INDEX IX_tb_cm_margem_reserva_item_reserva ON dbo.tb_cm_margem_reserva_item (id_reserva);
 GO
 
 -- Opcionais / Agrega / Desagrega
-CREATE TABLE dbo.tb_margem_reserva_item_opcional (
+CREATE TABLE dbo.tb_cm_margem_reserva_item_opcional (
     id_reserva_item_opcional BIGINT IDENTITY(1,1)
-        CONSTRAINT PK_tb_margem_reserva_item_opcional PRIMARY KEY,
+        CONSTRAINT PK_tb_cm_margem_reserva_item_opcional PRIMARY KEY,
     id_reserva_item          BIGINT        NOT NULL,
     descricao                NVARCHAR(200) NOT NULL,
     horas                    DECIMAL(9,2)  NULL,
@@ -318,19 +318,19 @@ CREATE TABLE dbo.tb_margem_reserva_item_opcional (
     valor_total              AS (custo_unitario * quantidade) PERSISTED,
     created_at               DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
     updated_at               DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT FK_tb_margem_reserva_item_opc_item
-        FOREIGN KEY (id_reserva_item) REFERENCES dbo.tb_margem_reserva_item (id_reserva_item)
+    CONSTRAINT FK_tb_cm_margem_reserva_item_opc_item
+        FOREIGN KEY (id_reserva_item) REFERENCES dbo.tb_cm_margem_reserva_item (id_reserva_item)
 );
 GO
 
-CREATE INDEX IX_tb_margem_reserva_item_opc_item
-    ON dbo.tb_margem_reserva_item_opcional (id_reserva_item);
+CREATE INDEX IX_tb_cm_margem_reserva_item_opc_item
+    ON dbo.tb_cm_margem_reserva_item_opcional (id_reserva_item);
 GO
 
 -- Fluxo de pagamento (entrada + parcelas)
-CREATE TABLE dbo.tb_margem_reserva_item_fluxo (
+CREATE TABLE dbo.tb_cm_margem_reserva_item_fluxo (
     id_reserva_item_fluxo BIGINT IDENTITY(1,1)
-        CONSTRAINT PK_tb_margem_reserva_item_fluxo PRIMARY KEY,
+        CONSTRAINT PK_tb_cm_margem_reserva_item_fluxo PRIMARY KEY,
     id_reserva_item       BIGINT        NOT NULL,
     tipo_parcela          TINYINT       NOT NULL, -- 1=entrada e 2=parcela
     numero_parcela        SMALLINT      NOT NULL, -- 0 para entrada
@@ -342,44 +342,44 @@ CREATE TABLE dbo.tb_margem_reserva_item_fluxo (
     custo_financeiro      DECIMAL(18,2) NOT NULL,
     created_at            DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
     updated_at            DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT FK_tb_margem_fluxo_item
-        FOREIGN KEY (id_reserva_item) REFERENCES dbo.tb_margem_reserva_item (id_reserva_item),
-    CONSTRAINT CK_tb_margem_fluxo_tipo_parcela CHECK (tipo_parcela IN (1,2)),
-    CONSTRAINT CK_tb_margem_fluxo_percentual_base CHECK (percentual_base BETWEEN 0 AND 1)
+    CONSTRAINT FK_tb_cm_margem_fluxo_item
+        FOREIGN KEY (id_reserva_item) REFERENCES dbo.tb_cm_margem_reserva_item (id_reserva_item),
+    CONSTRAINT CK_tb_cm_margem_fluxo_tipo_parcela CHECK (tipo_parcela IN (1,2)),
+    CONSTRAINT CK_tb_cm_margem_fluxo_percentual_base CHECK (percentual_base BETWEEN 0 AND 1)
 );
 GO
 
-CREATE INDEX IX_tb_margem_fluxo_item
-    ON dbo.tb_margem_reserva_item_fluxo (id_reserva_item, numero_parcela);
+CREATE INDEX IX_tb_cm_margem_fluxo_item
+    ON dbo.tb_cm_margem_reserva_item_fluxo (id_reserva_item, numero_parcela);
 GO
 
 -- Detalhe da comissão do vendedor
-CREATE TABLE dbo.tb_margem_reserva_item_comissao (
+CREATE TABLE dbo.tb_cm_margem_reserva_item_comissao (
     id_reserva_item_comissao BIGINT IDENTITY(1,1)
-        CONSTRAINT PK_tb_margem_reserva_item_comissao PRIMARY KEY,
+        CONSTRAINT PK_tb_cm_margem_reserva_item_comissao PRIMARY KEY,
     id_reserva_item          BIGINT        NOT NULL,
     tipo_comissao            NVARCHAR(20)  NOT NULL, -- BRUTA, DSR, ENCARGO
     percentual               DECIMAL(9,6)  NOT NULL,
     valor                    DECIMAL(18,2) NOT NULL,
     created_at               DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
     updated_at               DATETIME2(0)  NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT FK_tb_margem_item_comissao_item
-        FOREIGN KEY (id_reserva_item) REFERENCES dbo.tb_margem_reserva_item (id_reserva_item),
-    CONSTRAINT CK_tb_margem_item_comissao_tipo
+    CONSTRAINT FK_tb_cm_margem_item_comissao_item
+        FOREIGN KEY (id_reserva_item) REFERENCES dbo.tb_cm_margem_reserva_item (id_reserva_item),
+    CONSTRAINT CK_tb_cm_margem_item_comissao_tipo
         CHECK (tipo_comissao IN ('BRUTA','DSR','ENCARGO')),
-    CONSTRAINT CK_tb_margem_item_comissao_perc
+    CONSTRAINT CK_tb_cm_margem_item_comissao_perc
         CHECK (percentual BETWEEN 0 AND 5)
 );
 GO
 
-CREATE INDEX IX_tb_margem_item_comissao_item
-    ON dbo.tb_margem_reserva_item_comissao (id_reserva_item);
+CREATE INDEX IX_tb_cm_margem_item_comissao_item
+    ON dbo.tb_cm_margem_reserva_item_comissao (id_reserva_item);
 GO
 
 -- Log de integração com SAP
-CREATE TABLE dbo.tb_margem_log_integracao_sap (
+CREATE TABLE dbo.tb_cm_margem_log_integracao_sap (
     id_log_integracao BIGINT IDENTITY(1,1)
-        CONSTRAINT PK_tb_margem_log_integracao_sap PRIMARY KEY,
+        CONSTRAINT PK_tb_cm_margem_log_integracao_sap PRIMARY KEY,
     sistema_origem    NVARCHAR(50)  NOT NULL,
     tipo_registro     NVARCHAR(50)  NOT NULL,
     chave_externa     NVARCHAR(100) NOT NULL,
