@@ -77,7 +77,7 @@ class MargemRepository:
                 self._cliente.c.codigo_sap,
                 self._cliente.c.razao_social,
             )
-            .where(self._cliente.c.ativo.is_(True))
+            .where(self._cliente.c.ativo == 1)
             .order_by(self._cliente.c.razao_social_ci)
         )
         return list(self._session.execute(stmt).mappings().all())
@@ -89,7 +89,7 @@ class MargemRepository:
                 self._filial.c.codigo_sap,
                 self._filial.c.nome,
             )
-            .where(self._filial.c.ativo.is_(True))
+            .where(self._filial.c.ativo == 1)
             .order_by(self._filial.c.nome_ci)
         )
         return list(self._session.execute(stmt).mappings().all())
@@ -101,7 +101,7 @@ class MargemRepository:
                 self._produto.c.codigo_sap,
                 self._produto.c.descricao,
             )
-            .where(self._produto.c.ativo.is_(True))
+            .where(self._produto.c.ativo == 1)
             .order_by(self._produto.c.descricao_ci)
         )
         return list(self._session.execute(stmt).mappings().all())
@@ -112,7 +112,7 @@ class MargemRepository:
                 self._tipo_venda.c.id_tipo_venda,
                 self._tipo_venda.c.nome,
             )
-            .where(self._tipo_venda.c.ativo.is_(True))
+            .where(self._tipo_venda.c.ativo == 1)
             .order_by(self._tipo_venda.c.nome)
         )
         return list(self._session.execute(stmt).mappings().all())
@@ -123,7 +123,7 @@ class MargemRepository:
                 self._modalidade_fin.c.id_modalidade_fin,
                 self._modalidade_fin.c.nome,
             )
-            .where(self._modalidade_fin.c.ativo.is_(True))
+            .where(self._modalidade_fin.c.ativo == 1)
             .order_by(self._modalidade_fin.c.nome)
         )
         return list(self._session.execute(stmt).mappings().all())
@@ -134,7 +134,7 @@ class MargemRepository:
                 self._banco.c.id_banco_financiador,
                 self._banco.c.nome,
             )
-            .where(self._banco.c.ativo.is_(True))
+            .where(self._banco.c.ativo == 1)
             .order_by(self._banco.c.nome)
         )
         return list(self._session.execute(stmt).mappings().all())
@@ -153,7 +153,7 @@ class MargemRepository:
 
         stmt = select(p.c.valor_decimal).where(
             p.c.codigo == codigo,
-            p.c.ativo.is_(True),
+            p.c.ativo == 1,
             p.c.data_inicio <= data_ref,
             or_(p.c.data_fim.is_(None), p.c.data_fim >= data_ref),
         )
