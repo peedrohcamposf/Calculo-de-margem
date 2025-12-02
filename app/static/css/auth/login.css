@@ -1,0 +1,245 @@
+/* Reset de estilização básico */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: radial-gradient(circle at top left, #355cff 0, #141622 45%, #05060a 100%);
+    color: #f5f5f7;
+}
+
+/* Layout base */
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Card principal */
+.login-card {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 420px;
+    padding: 32px 28px 28px;
+    border-radius: 24px;
+    background: rgba(10, 12, 24, 0.88);
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.65),
+        0 0 0 1px rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(14px);
+}
+
+/* Logo abstrata */
+.login-logo {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    background: radial-gradient(circle at 20% 20%, #ffffff 0, #c5cbff 28%, #4e5bff 80%);
+    box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(255, 255, 255, 0.12);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
+    padding: 8px;
+    margin: 0 auto 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.logo-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    opacity: 0.55;
+    filter: blur(1px);
+}
+
+.logo-dot-1 {
+    background: #ffb347;
+    top: 4px;
+    right: 4px;
+}
+
+.logo-dot-2 {
+    background: #ff6b81;
+    bottom: 6px;
+    left: 10px;
+}
+
+.logo-dot-3 {
+    background: #3cdfff;
+    top: 14px;
+    left: -4px;
+}
+
+.logo-dot-4 {
+    background: #9fff8a;
+    bottom: -2px;
+    right: 16px;
+}
+
+/* Título e texto */
+.login-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.login-subtitle {
+    font-size: 0.92rem;
+    text-align: center;
+    color: #c3c7e4;
+    margin-bottom: 24px;
+    line-height: 1.4;
+}
+
+/* Botão de login */
+.login-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    border: none;
+    outline: none;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 11px 16px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #f5f5f7, #ffffff);
+    color: #1f2437;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.35),
+        0 0 0 1px rgba(17, 24, 39, 0.08);
+    transition:
+        transform 0.12s ease-out,
+        box-shadow 0.12s ease-out,
+        background 0.12s ease-out,
+        filter 0.12s ease-out;
+}
+
+.login-button:hover {
+    transform: translateY(-1px);
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(17, 24, 39, 0.1);
+    filter: brightness(1.02);
+}
+
+.login-button:active {
+    transform: translateY(0);
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(17, 24, 39, 0.1);
+}
+
+/* Logo Microsoft */
+.login-button-icon {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 2px;
+    padding: 5px;
+    border-radius: 4px;
+    background: #ffffff;
+    box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.15);
+}
+
+.ms-square {
+    width: 8px;
+    height: 8px;
+}
+
+.ms-square-1 {
+    background: #f35325;
+}
+
+.ms-square-2 {
+    background: #81bc06;
+}
+
+.ms-square-3 {
+    background: #05a6f0;
+}
+
+.ms-square-4 {
+    background: #ffba08;
+}
+
+.login-button-text {
+    white-space: nowrap;
+}
+
+/* Texto de footer */
+.login-footer-text {
+    margin-top: 18px;
+    font-size: 0.8rem;
+    text-align: center;
+    color: #9297be;
+}
+
+/* Elementos decorativos do fundo */
+.login-background-decor {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(3px);
+    opacity: 0.28;
+    z-index: 1;
+}
+
+.decor-1 {
+    width: 360px;
+    height: 360px;
+    background: radial-gradient(circle, #4f46e5 0, transparent 55%);
+    top: -120px;
+    right: -120px;
+}
+
+.decor-2 {
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, #06b6d4 0, transparent 60%);
+    bottom: -80px;
+    left: -60px;
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+    .login-card {
+        padding: 24px 20px 22px;
+        border-radius: 20px;
+    }
+
+    .login-title {
+        font-size: 1.25rem;
+    }
+
+    .login-subtitle {
+        font-size: 0.88rem;
+    }
+
+    .login-button {
+        font-size: 0.9rem;
+        padding: 10px 14px;
+    }
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Sistema de Margem</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS apenas da tela de login -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth/login.css') }}">
+</head>
+
+<body>
+    <div class="login-page">
+        <div class="login-card">
+            <div class="login-logo">
+                <span class="logo-dot logo-dot-1"></span>
+                <span class="logo-dot logo-dot-2"></span>
+                <span class="logo-dot logo-dot-3"></span>
+                <span class="logo-dot logo-dot-4"></span>
+            </div>
+
+            <h1 class="login-title">Cálculo de Margem</h1>
+            <p class="login-subtitle">
+                Acesse com sua conta corporativa Brasif para continuar.
+            </p>
+
+            <a href="{{ url_for('auth.login') }}" class="login-button">
+                <span class="login-button-icon">
+                    <!-- Logo simplificado da Microsoft em CSS -->
+                    <span class="ms-square ms-square-1"></span>
+                    <span class="ms-square ms-square-2"></span>
+                    <span class="ms-square ms-square-3"></span>
+                    <span class="ms-square ms-square-4"></span>
+                </span>
+                <span class="login-button-text">
+                    Entrar com Microsoft
+                </span>
+            </a>
+
+            <p class="login-footer-text">
+                Você será redirecionado para a página de login da Microsoft.
+            </p>
+        </div>
+
+        <div class="login-background-decor decor-1"></div>
+        <div class="login-background-decor decor-2"></div>
+    </div>
+</body>
+
+</html>
