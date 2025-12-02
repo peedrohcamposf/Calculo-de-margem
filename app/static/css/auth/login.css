@@ -62,39 +62,6 @@ body {
     overflow: hidden;
 }
 
-.logo-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    position: absolute;
-    opacity: 0.55;
-    filter: blur(1px);
-}
-
-.logo-dot-1 {
-    background: #ffb347;
-    top: 4px;
-    right: 4px;
-}
-
-.logo-dot-2 {
-    background: #ff6b81;
-    bottom: 6px;
-    left: 10px;
-}
-
-.logo-dot-3 {
-    background: #3cdfff;
-    top: 14px;
-    left: -4px;
-}
-
-.logo-dot-4 {
-    background: #9fff8a;
-    bottom: -2px;
-    right: 16px;
-}
-
 /* Título e texto */
 .login-title {
     font-size: 1.4rem;
