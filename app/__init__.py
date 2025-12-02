@@ -13,7 +13,7 @@ from sqlalchemy import text as sa_text
 
 from .app_config import Config
 from .extensions import db, limiter, csrf
-# from .security.login_manager import init_login
+from .security.login_manager import init_login
 
 # Flag de processo de warmup global
 _APP_WARMUP_DONE: bool = False
@@ -68,7 +68,7 @@ def create_app(config_class: type[Config] = Config) -> Flask:
 
     # Extensões
     db.init_app(app)
-    # init_login(app)
+    init_login(app)
     limiter.init_app(app)
     csrf.init_app(app)
 
