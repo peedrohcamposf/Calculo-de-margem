@@ -9,6 +9,7 @@ from flask import (
     Blueprint,
     current_app,
     redirect,
+    render_template,
     request,
     session,
     flash,
@@ -177,6 +178,15 @@ def _get_cargo_from_ad(result: dict[str, Any], claims: dict[str, Any]) -> str | 
         return None
 
     return _fetch_cargo_from_graph(access_token)
+
+
+# Tela de login apenas para renreziação do template
+@auth_bp.get("/login-page")
+def login_page():
+    if current_user.is_authenticated:
+        return _redirect_home()
+
+    return render_template("auth/login.html")
 
 
 # Início do fluxo de login usando MSAL

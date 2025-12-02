@@ -24,7 +24,7 @@ def init_login(app: Flask) -> None:
     # Configura o Flask-Login no app e registra callbacks de segurança
     login_manager.init_app(app)
     login_manager.session_protection = "strong"
-    login_manager.login_view = "auth.login"
+    login_manager.login_view = "auth.login_page"
     login_manager.login_message_category = "warning"
 
     @login_manager.user_loader
