@@ -28,7 +28,7 @@ from urllib.parse import urlparse, urljoin
 from app.extensions import db, limiter
 from app.domain.usuario import UsuarioMargemModel
 
-auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
+auth_bp = Blueprint("auth", __name__)
 
 # Limite específico para rotas de auth
 LOGIN_RATE_LIMIT = "10 per minute"
@@ -216,7 +216,7 @@ def login():
 
 
 # Endpoint de callback do Azure AD
-@auth_bp.route("/callback")
+@auth_bp.route("/getAToken")
 @limiter.limit(LOGIN_RATE_LIMIT)
 def callback():
     expected_state = session.pop("auth_state", None)
