@@ -14,6 +14,7 @@ from sqlalchemy import text as sa_text
 from .app_config import Config
 from .extensions import db, limiter, csrf
 from .security.login_manager import init_login
+from app.forms.auth_forms import LogoutForm
 
 # Flag de processo de warmup global
 _APP_WARMUP_DONE: bool = False
@@ -128,6 +129,10 @@ def create_app(config_class: type[Config] = Config) -> Flask:
             can = admin or in_allowed
 
         return dict(can_sync_ad=can)
+
+    @app.context_processor
+    def inject_logout_form():
+        return dict(logout_form=LogoutForm())
 
     # Error handlers (fallbacks simples)
     @app.errorhandler(401)
