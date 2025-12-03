@@ -4,7 +4,6 @@ from flask_login import UserMixin
 from sqlalchemy import (
     Boolean,
     Column,
-    ForeignKey,
     Integer,
     String,
     text,
@@ -15,9 +14,9 @@ from .base import Base, TimestampMixin
 
 
 # Usuário autenticado via Azure AD
-class UsuarioMargemModel(TimestampMixin, UserMixin, Base):
+class UsuarioModel(TimestampMixin, UserMixin, Base):
 
-    __tablename__ = "tb_cm_margem_usuario"
+    __tablename__ = "tb_cm_usuario"
     __table_args__ = {"schema": "dbo"}
 
     id_usuario = Column(Integer, primary_key=True)
@@ -28,21 +27,21 @@ class UsuarioMargemModel(TimestampMixin, UserMixin, Base):
     ativo = Column(Boolean, nullable=False, server_default=text("1"))
 
     vendedor = relationship(
-        "VendedorMargemModel",
+        "VendedorModel",
         back_populates="usuarios",
         lazy="joined",
     )
 
     reservas_criadas = relationship(
-        "ReservaMargemModel",
-        foreign_keys="ReservaMargemModel.criado_por",
+        "ReservaModel",
+        foreign_keys="ReservaModel.criado_por",
         back_populates="usuario_criador",
         lazy="select",
     )
 
     reservas_atualizadas = relationship(
-        "ReservaMargemModel",
-        foreign_keys="ReservaMargemModel.atualizado_por",
+        "ReservaModel",
+        foreign_keys="ReservaModel.atualizado_por",
         back_populates="usuario_atualizador",
         lazy="select",
     )
@@ -53,7 +52,7 @@ class UsuarioMargemModel(TimestampMixin, UserMixin, Base):
 
     def __repr__(self) -> str:
         return (
-            f"<UsuarioMargem("
+            f"<Usuario("
             f"id_usuario={self.id_usuario!r}, "
             f"email_login={self.email_login!r}"
             f")>"
