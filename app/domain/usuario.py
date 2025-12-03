@@ -24,13 +24,6 @@ class UsuarioMargemModel(TimestampMixin, UserMixin, Base):
     azure_oid = Column(String(64), nullable=False, unique=True)
     email_login = Column(String(254), nullable=False, unique=True)
     nome = Column(String(150), nullable=True)
-
-    id_vendedor = Column(
-        Integer,
-        ForeignKey("dbo.tb_cm_margem_vendedor.id_vendedor"),
-        nullable=True,
-    )
-
     cargo = Column(String(30), nullable=False)
     ativo = Column(Boolean, nullable=False, server_default=text("1"))
 
