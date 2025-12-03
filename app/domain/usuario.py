@@ -26,26 +26,6 @@ class UsuarioModel(TimestampMixin, UserMixin, Base):
     cargo = Column(String(30), nullable=False)
     ativo = Column(Boolean, nullable=False, server_default=text("1"))
 
-    vendedor = relationship(
-        "VendedorModel",
-        back_populates="usuarios",
-        lazy="joined",
-    )
-
-    reservas_criadas = relationship(
-        "ReservaModel",
-        foreign_keys="ReservaModel.criado_por",
-        back_populates="usuario_criador",
-        lazy="select",
-    )
-
-    reservas_atualizadas = relationship(
-        "ReservaModel",
-        foreign_keys="ReservaModel.atualizado_por",
-        back_populates="usuario_atualizador",
-        lazy="select",
-    )
-
     # Flask-Login
     def get_id(self) -> str:
         return str(self.id_usuario)
