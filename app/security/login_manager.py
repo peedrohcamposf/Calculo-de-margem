@@ -7,7 +7,7 @@ from flask_login import current_user
 from werkzeug.routing import BuildError
 
 from app.extensions import login_manager, db
-from app.domain.usuario import UsuarioMargemModel
+from app.domain.usuario import UsuarioModel
 
 
 def _safe_redirect_login(next_url: str | None = None):
@@ -28,7 +28,7 @@ def init_login(app: Flask) -> None:
     login_manager.login_message_category = "warning"
 
     @login_manager.user_loader
-    def load_user(user_id: str) -> Optional[UsuarioMargemModel]:
+    def load_user(user_id: str) -> Optional[UsuarioModel]:
         # Carrega o usuário a partir do ID salvo na sessão
         if not user_id:
             return None
@@ -40,7 +40,7 @@ def init_login(app: Flask) -> None:
             return None
 
         try:
-            user = db.session.get(UsuarioMargemModel, user_id_int)
+            user = db.session.get(UsuarioModel, user_id_int)
         except Exception:
             app.logger.exception(
                 "Erro ao carregar usuário no user_loader (id=%s)", user_id_int

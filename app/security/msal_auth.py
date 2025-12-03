@@ -26,7 +26,7 @@ from werkzeug.routing import BuildError
 from urllib.parse import urlparse, urljoin
 
 from app.extensions import db, limiter
-from app.domain.usuario import UsuarioMargemModel
+from app.domain.usuario import UsuarioModel
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -298,16 +298,16 @@ def callback():
     # Upsert seguro do usuário
     try:
         user = (
-            db.session.query(UsuarioMargemModel)
-            .filter(UsuarioMargemModel.azure_oid == azure_oid)
+            db.session.query(UsuarioModel)
+            .filter(UsuarioModel.azure_oid == azure_oid)
             .one_or_none()
         )
 
         if not user:
             # Fallback: procura por email_login
             user = (
-                db.session.query(UsuarioMargemModel)
-                .filter(UsuarioMargemModel.email_login == email)
+                db.session.query(UsuarioModel)
+                .filter(UsuarioModel.email_login == email)
                 .one_or_none()
             )
 
@@ -328,7 +328,7 @@ def callback():
                 )
                 return redirect(url_for("auth.login"))
 
-            user = UsuarioMargemModel(
+            user = UsuarioModel(
                 azure_oid=azure_oid,
                 email_login=email,
                 nome=nome,
