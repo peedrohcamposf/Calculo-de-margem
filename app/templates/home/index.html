@@ -1,24 +1,37 @@
+{% set title = "Cálculo de Margem" %}
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container py-4">
+<div class="container-lg py-3 py-md-4">
 
-    <!-- Cabeçalho da página -->
-    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center mb-4">
-        <div>
-            <h1 class="h3 mb-1 fw-bold">Cálculo de Margem</h1>
-            <p class="text-muted mb-0">
-                Simule a margem de contribuição da reserva antes de seguir para aprovação.
-            </p>
-        </div>
-        <div class="mt-3 mt-lg-0 text-lg-end small">
-            {% if usuario %}
-            <div class="fw-semibold">
-                Olá, {{ usuario.nome or usuario.email_login }}, seja bem-vindo(a)!
+    <!-- Cabeçalho -->
+    <div class="mb-4">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div>
+                <div
+                    class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-primary-subtle text-primary mb-2">
+                    <span class="small fw-semibold text-uppercase">Simulador de Margem</span>
+                </div>
+                <h1 class="h3 h-md-2 fw-bold mb-1">
+                    Cálculo de margem de contribuição
+                </h1>
+                <p class="text-muted mb-0">
+                    Preencha os dados da reserva e visualize, em tempo real, a margem e os principais indicadores da
+                    operação.
+                </p>
             </div>
-            {% if usuario.cargo %}
-            <div class="text-muted">Perfil: {{ usuario.cargo }}</div>
-            {% endif %}
+
+            {% if usuario.is_authenticated %}
+            <div class="text-md-end small">
+                <div class="fw-semibold">
+                    Olá, {{ usuario.nome or usuario.email_login }} 👋
+                </div>
+                {% if usuario.cargo %}
+                <div class="text-muted">
+                    {{ usuario.cargo }}
+                </div>
+                {% endif %}
+            </div>
             {% endif %}
         </div>
     </div>
@@ -38,658 +51,724 @@
     {% endif %}
     {% endwith %}
 
-    <div class="row g-4">
-        <!-- Coluna esquerda: formulário -->
-        <div class="col-lg-7">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header border-0"
-                    style="background: linear-gradient(120deg, #0d6efd, #0b5ed7); color: #fff;">
-                    <div class="d-flex justify-content-between align-items-center">
+    <div class="row g-4 align-items-start">
+
+        <!-- Coluna esquerda, formulário -->
+        <div class="col-xl-7">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-3 p-md-4">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
                         <div>
-                            <h2 class="h6 mb-0 fw-semibold">Nova simulação de reserva</h2>
-                            <small class="opacity-75">Preencha os dados comerciais e financeiros para calcular a
-                                margem.</small>
+                            <h2 class="h5 fw-semibold mb-1">Dados da reserva</h2>
+                            <p class="text-muted small mb-0">
+                                Informe as informações comerciais, financeiras e de custos para calcular a margem.
+                            </p>
                         </div>
-                        <div class="badge bg-light text-primary fw-semibold">
-                            Passo 1 • Preenchimento
-                        </div>
+                        <span class="badge bg-primary-subtle text-primary fw-semibold">
+                            Passo 1
+                        </span>
                     </div>
-                </div>
-                <div class="card-body bg-light-subtle">
 
                     <form method="POST" novalidate>
                         {{ form.hidden_tag() }}
 
-                        <!-- Bloco: Dados comerciais -->
-                        <div class="mb-3 border-start border-3 border-primary ps-3">
-                            <h3 class="h6 mb-1 fw-semibold text-primary">Dados comerciais</h3>
-                            <small class="text-muted">Cliente, filial, produto e condições básicas de venda.</small>
-                        </div>
-
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label" for="{{ form.cliente_id.id }}">{{ form.cliente_id.label.text
-                                    }}</label>
-                                {{ form.cliente_id(
-                                class="form-select " + ("is-invalid" if form.cliente_id.errors else "")
-                                ) }}
-                                {% if form.cliente_id.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.cliente_id.errors[0] }}
-                                </div>
-                                {% endif %}
+                        <!-- Seção, Dados comerciais -->
+                        <div class="mb-3">
+                            <div class="small text-uppercase text-muted fw-semibold mb-2">
+                                Dados comerciais
                             </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label" for="{{ form.filial_id.id }}">{{ form.filial_id.label.text
-                                    }}</label>
-                                {{ form.filial_id(
-                                class="form-select " + ("is-invalid" if form.filial_id.errors else "")
-                                ) }}
-                                {% if form.filial_id.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.filial_id.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-12">
-                                <label class="form-label" for="{{ form.produto_id.id }}">{{ form.produto_id.label.text
-                                    }}</label>
-                                {{ form.produto_id(
-                                class="form-select " + ("is-invalid" if form.produto_id.errors else "")
-                                ) }}
-                                {% if form.produto_id.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.produto_id.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.tipo_venda_id.id }}">{{
-                                    form.tipo_venda_id.label.text }}</label>
-                                {{ form.tipo_venda_id(
-                                class="form-select " + ("is-invalid" if form.tipo_venda_id.errors else "")
-                                ) }}
-                                {% if form.tipo_venda_id.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.tipo_venda_id.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.modalidade_fin_id.id }}">{{
-                                    form.modalidade_fin_id.label.text }}</label>
-                                {{ form.modalidade_fin_id(
-                                class="form-select " + ("is-invalid" if form.modalidade_fin_id.errors else "")
-                                ) }}
-                                {% if form.modalidade_fin_id.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.modalidade_fin_id.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.banco_financiador_id.id }}">{{
-                                    form.banco_financiador_id.label.text }}</label>
-                                {{ form.banco_financiador_id(
-                                class="form-select " + ("is-invalid" if form.banco_financiador_id.errors else "")
-                                ) }}
-                                {% if form.banco_financiador_id.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.banco_financiador_id.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.quantidade.id }}">{{ form.quantidade.label.text
-                                    }}</label>
-                                {{ form.quantidade(
-                                class="form-control " + ("is-invalid" if form.quantidade.errors else ""),
-                                min="1"
-                                ) }}
-                                {% if form.quantidade.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.quantidade.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.valor_venda_unitario.id }}">{{
-                                    form.valor_venda_unitario.label.text }}</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">R$</span>
-                                    {{ form.valor_venda_unitario(
-                                    class="form-control " + ("is-invalid" if form.valor_venda_unitario.errors else "")
-                                    ) }}
-                                </div>
-                                {% if form.valor_venda_unitario.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.valor_venda_unitario.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.data_reserva.id }}">{{
-                                    form.data_reserva.label.text }}</label>
-                                {{ form.data_reserva(
-                                class="form-control " + ("is-invalid" if form.data_reserva.errors else ""),
-                                type="date"
-                                ) }}
-                                {% if form.data_reserva.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.data_reserva.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.previsao_entrega.id }}">{{
-                                    form.previsao_entrega.label.text }}</label>
-                                {{ form.previsao_entrega(
-                                class="form-control " + ("is-invalid" if form.previsao_entrega.errors else ""),
-                                type="date"
-                                ) }}
-                                {% if form.previsao_entrega.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.previsao_entrega.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4 d-flex align-items-end">
-                                <div class="form-check form-switch">
-                                    {{ form.possui_af(
-                                    class="form-check-input",
-                                    role="switch"
-                                    ) }}
-                                    <label class="form-check-label" for="{{ form.possui_af.id }}">
-                                        {{ form.possui_af.label.text }}
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Bloco: Condições de pagamento -->
-                        <div class="mb-3 border-start border-3 border-primary ps-3">
-                            <h3 class="h6 mb-1 fw-semibold text-primary">Condições de pagamento</h3>
-                            <small class="text-muted">Entrada, parcelamento e fluxo financeiro da operação.</small>
-                        </div>
-
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.perc_entrada.id }}">{{
-                                    form.perc_entrada.label.text }}</label>
-                                <div class="input-group">
-                                    {{ form.perc_entrada(
-                                    class="form-control " + ("is-invalid" if form.perc_entrada.errors else "")
-                                    ) }}
-                                    <span class="input-group-text">0 a 1</span>
-                                </div>
-                                {% if form.perc_entrada.description %}
-                                <div class="form-text">{{ form.perc_entrada.description }}</div>
-                                {% endif %}
-                                {% if form.perc_entrada.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.perc_entrada.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.qtd_parcelas.id }}">{{
-                                    form.qtd_parcelas.label.text }}</label>
-                                {{ form.qtd_parcelas(
-                                class="form-control " + ("is-invalid" if form.qtd_parcelas.errors else "")
-                                ) }}
-                                {% if form.qtd_parcelas.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.qtd_parcelas.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.prazo_primeira_parcela_dias.id }}">{{
-                                    form.prazo_primeira_parcela_dias.label.text }}</label>
-                                <div class="input-group">
-                                    {{ form.prazo_primeira_parcela_dias(
-                                    class="form-control " + ("is-invalid" if form.prazo_primeira_parcela_dias.errors
-                                    else "")
-                                    ) }}
-                                    <span class="input-group-text">dias</span>
-                                </div>
-                                {% if form.prazo_primeira_parcela_dias.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.prazo_primeira_parcela_dias.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.intervalo_parcelas_dias.id }}">{{
-                                    form.intervalo_parcelas_dias.label.text }}</label>
-                                <div class="input-group">
-                                    {{ form.intervalo_parcelas_dias(
-                                    class="form-control " + ("is-invalid" if form.intervalo_parcelas_dias.errors else
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label mb-1" for="{{ form.cliente_id.id }}">{{
+                                        form.cliente_id.label.text }}</label>
+                                    {{ form.cliente_id(
+                                    class="form-select form-select-sm " + ("is-invalid" if form.cliente_id.errors else
                                     "")
                                     ) }}
-                                    <span class="input-group-text">dias</span>
+                                    {% if form.cliente_id.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.cliente_id.errors[0] }}
+                                    </div>
+                                    {% endif %}
                                 </div>
-                                {% if form.intervalo_parcelas_dias.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.intervalo_parcelas_dias.errors[0] }}
+
+                                <div class="col-md-6">
+                                    <label class="form-label mb-1" for="{{ form.filial_id.id }}">{{
+                                        form.filial_id.label.text }}</label>
+                                    {{ form.filial_id(
+                                    class="form-select form-select-sm " + ("is-invalid" if form.filial_id.errors else
+                                    "")
+                                    ) }}
+                                    {% if form.filial_id.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.filial_id.errors[0] }}
+                                    </div>
+                                    {% endif %}
                                 </div>
-                                {% endif %}
+
+                                <div class="col-12">
+                                    <label class="form-label mb-1" for="{{ form.produto_id.id }}">{{
+                                        form.produto_id.label.text }}</label>
+                                    {{ form.produto_id(
+                                    class="form-select form-select-sm " + ("is-invalid" if form.produto_id.errors else
+                                    "")
+                                    ) }}
+                                    {% if form.produto_id.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.produto_id.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Bloco: Custos adicionais -->
-                        <div class="mb-3 border-start border-3 border-primary ps-3">
-                            <h3 class="h6 mb-1 fw-semibold text-primary">Custos adicionais</h3>
-                            <small class="text-muted">Opcionais, fretes, contrato, PDI, carta fiança e
-                                cortesias.</small>
-                        </div>
-
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.valor_opcionais.id }}">{{
-                                    form.valor_opcionais.label.text }}</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">R$</span>
-                                    {{ form.valor_opcionais(
-                                    class="form-control " + ("is-invalid" if form.valor_opcionais.errors else "")
+                        <!-- Seção, Condições de venda -->
+                        <div class="mb-3">
+                            <div class="small text-uppercase text-muted fw-semibold mb-2">
+                                Condições de venda
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.tipo_venda_id.id }}">{{
+                                        form.tipo_venda_id.label.text }}</label>
+                                    {{ form.tipo_venda_id(
+                                    class="form-select form-select-sm " + ("is-invalid" if form.tipo_venda_id.errors
+                                    else "")
                                     ) }}
+                                    {% if form.tipo_venda_id.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.tipo_venda_id.errors[0] }}
+                                    </div>
+                                    {% endif %}
                                 </div>
-                                {% if form.valor_opcionais.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.valor_opcionais.errors[0] }}
+
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.modalidade_fin_id.id }}">{{
+                                        form.modalidade_fin_id.label.text }}</label>
+                                    {{ form.modalidade_fin_id(
+                                    class="form-select form-select-sm " + ("is-invalid" if form.modalidade_fin_id.errors
+                                    else "")
+                                    ) }}
+                                    {% if form.modalidade_fin_id.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.modalidade_fin_id.errors[0] }}
+                                    </div>
+                                    {% endif %}
                                 </div>
-                                {% endif %}
+
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.banco_financiador_id.id }}">{{
+                                        form.banco_financiador_id.label.text }}</label>
+                                    {{ form.banco_financiador_id(
+                                    class="form-select form-select-sm " + ("is-invalid" if
+                                    form.banco_financiador_id.errors else "")
+                                    ) }}
+                                    {% if form.banco_financiador_id.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.banco_financiador_id.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
                             </div>
 
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.custo_mao_obra.id }}">{{
-                                    form.custo_mao_obra.label.text }}</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">R$</span>
-                                    {{ form.custo_mao_obra(
-                                    class="form-control " + ("is-invalid" if form.custo_mao_obra.errors else "")
+                            <div class="row g-3 mt-1">
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.quantidade.id }}">{{
+                                        form.quantidade.label.text }}</label>
+                                    {{ form.quantidade(
+                                    class="form-control form-control-sm " + ("is-invalid" if form.quantidade.errors else
+                                    ""),
+                                    min="1"
                                     ) }}
+                                    {% if form.quantidade.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.quantidade.errors[0] }}
+                                    </div>
+                                    {% endif %}
                                 </div>
-                                {% if form.custo_mao_obra.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.custo_mao_obra.errors[0] }}
+
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.valor_venda_unitario.id }}">{{
+                                        form.valor_venda_unitario.label.text }}</label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">R$</span>
+                                        {{ form.valor_venda_unitario(
+                                        class="form-control " + ("is-invalid" if form.valor_venda_unitario.errors else
+                                        "")
+                                        ) }}
+                                    </div>
+                                    {% if form.valor_venda_unitario.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.valor_venda_unitario.errors[0] }}
+                                    </div>
+                                    {% endif %}
                                 </div>
-                                {% endif %}
+
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <div class="form-check form-switch">
+                                        {{ form.possui_af(
+                                        class="form-check-input",
+                                        role="switch"
+                                        ) }}
+                                        <label class="form-check-label small ms-1" for="{{ form.possui_af.id }}">
+                                            {{ form.possui_af.label.text }}
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.frete_compra.id }}">{{
-                                    form.frete_compra.label.text }}</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">R$</span>
-                                    {{ form.frete_compra(
-                                    class="form-control " + ("is-invalid" if form.frete_compra.errors else "")
+                            <div class="row g-3 mt-1">
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.data_reserva.id }}">{{
+                                        form.data_reserva.label.text }}</label>
+                                    {{ form.data_reserva(
+                                    class="form-control form-control-sm " + ("is-invalid" if form.data_reserva.errors
+                                    else ""),
+                                    type="date"
                                     ) }}
+                                    {% if form.data_reserva.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.data_reserva.errors[0] }}
+                                    </div>
+                                    {% endif %}
                                 </div>
-                                {% if form.frete_compra.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.frete_compra.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
 
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.frete_venda.id }}">{{ form.frete_venda.label.text
-                                    }}</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">R$</span>
-                                    {{ form.frete_venda(
-                                    class="form-control " + ("is-invalid" if form.frete_venda.errors else "")
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.previsao_entrega.id }}">{{
+                                        form.previsao_entrega.label.text }}</label>
+                                    {{ form.previsao_entrega(
+                                    class="form-control form-control-sm " + ("is-invalid" if
+                                    form.previsao_entrega.errors else ""),
+                                    type="date"
                                     ) }}
+                                    {% if form.previsao_entrega.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.previsao_entrega.errors[0] }}
+                                    </div>
+                                    {% endif %}
                                 </div>
-                                {% if form.frete_venda.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.frete_venda.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.contrato_manutencao.id }}">{{
-                                    form.contrato_manutencao.label.text }}</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">R$</span>
-                                    {{ form.contrato_manutencao(
-                                    class="form-control " + ("is-invalid" if form.contrato_manutencao.errors else "")
-                                    ) }}
-                                </div>
-                                {% if form.contrato_manutencao.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.contrato_manutencao.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.perc_pdi_garantia.id }}">{{
-                                    form.perc_pdi_garantia.label.text }}</label>
-                                <div class="input-group">
-                                    {{ form.perc_pdi_garantia(
-                                    class="form-control " + ("is-invalid" if form.perc_pdi_garantia.errors else "")
-                                    ) }}
-                                    <span class="input-group-text">0 a 1</span>
-                                </div>
-                                {% if form.perc_pdi_garantia.description %}
-                                <div class="form-text">{{ form.perc_pdi_garantia.description }}</div>
-                                {% endif %}
-                                {% if form.perc_pdi_garantia.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.perc_pdi_garantia.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.perc_carta_fianca.id }}">{{
-                                    form.perc_carta_fianca.label.text }}</label>
-                                <div class="input-group">
-                                    {{ form.perc_carta_fianca(
-                                    class="form-control " + ("is-invalid" if form.perc_carta_fianca.errors else "")
-                                    ) }}
-                                    <span class="input-group-text">0 a 1</span>
-                                </div>
-                                {% if form.perc_carta_fianca.description %}
-                                <div class="form-text">{{ form.perc_carta_fianca.description }}</div>
-                                {% endif %}
-                                {% if form.perc_carta_fianca.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.perc_carta_fianca.errors[0] }}
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label" for="{{ form.valor_cortesia.id }}">{{
-                                    form.valor_cortesia.label.text }}</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">R$</span>
-                                    {{ form.valor_cortesia(
-                                    class="form-control " + ("is-invalid" if form.valor_cortesia.errors else "")
-                                    ) }}
-                                </div>
-                                {% if form.valor_cortesia.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.valor_cortesia.errors[0] }}
-                                </div>
-                                {% endif %}
                             </div>
                         </div>
 
-                        <!-- Ações -->
-                        <div class="d-flex justify-content-end pt-2 border-top">
+                        <!-- Seção, Condições de pagamento -->
+                        <div class="mb-3">
+                            <div class="small text-uppercase text-muted fw-semibold mb-2">
+                                Condições de pagamento
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.perc_entrada.id }}">{{
+                                        form.perc_entrada.label.text }}</label>
+                                    <div class="input-group input-group-sm">
+                                        {{ form.perc_entrada(
+                                        class="form-control " + ("is-invalid" if form.perc_entrada.errors else "")
+                                        ) }}
+                                        <span class="input-group-text">0 a 1</span>
+                                    </div>
+                                    {% if form.perc_entrada.description %}
+                                    <div class="form-text small">{{ form.perc_entrada.description }}</div>
+                                    {% endif %}
+                                    {% if form.perc_entrada.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.perc_entrada.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.qtd_parcelas.id }}">{{
+                                        form.qtd_parcelas.label.text }}</label>
+                                    {{ form.qtd_parcelas(
+                                    class="form-control form-control-sm " + ("is-invalid" if form.qtd_parcelas.errors
+                                    else "")
+                                    ) }}
+                                    {% if form.qtd_parcelas.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.qtd_parcelas.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.prazo_primeira_parcela_dias.id }}">{{
+                                        form.prazo_primeira_parcela_dias.label.text }}</label>
+                                    <div class="input-group input-group-sm">
+                                        {{ form.prazo_primeira_parcela_dias(
+                                        class="form-control " + ("is-invalid" if form.prazo_primeira_parcela_dias.errors
+                                        else "")
+                                        ) }}
+                                        <span class="input-group-text">dias</span>
+                                    </div>
+                                    {% if form.prazo_primeira_parcela_dias.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.prazo_primeira_parcela_dias.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.intervalo_parcelas_dias.id }}">{{
+                                        form.intervalo_parcelas_dias.label.text }}</label>
+                                    <div class="input-group input-group-sm">
+                                        {{ form.intervalo_parcelas_dias(
+                                        class="form-control " + ("is-invalid" if form.intervalo_parcelas_dias.errors
+                                        else "")
+                                        ) }}
+                                        <span class="input-group-text">dias</span>
+                                    </div>
+                                    {% if form.intervalo_parcelas_dias.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.intervalo_parcelas_dias.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Seção, Custos adicionais -->
+                        <div class="mb-3">
+                            <div class="small text-uppercase text-muted fw-semibold mb-2">
+                                Custos adicionais & serviços
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.valor_opcionais.id }}">{{
+                                        form.valor_opcionais.label.text }}</label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">R$</span>
+                                        {{ form.valor_opcionais(
+                                        class="form-control " + ("is-invalid" if form.valor_opcionais.errors else "")
+                                        ) }}
+                                    </div>
+                                    {% if form.valor_opcionais.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.valor_opcionais.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.custo_mao_obra.id }}">{{
+                                        form.custo_mao_obra.label.text }}</label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">R$</span>
+                                        {{ form.custo_mao_obra(
+                                        class="form-control " + ("is-invalid" if form.custo_mao_obra.errors else "")
+                                        ) }}
+                                    </div>
+                                    {% if form.custo_mao_obra.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.custo_mao_obra.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.frete_compra.id }}">{{
+                                        form.frete_compra.label.text }}</label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">R$</span>
+                                        {{ form.frete_compra(
+                                        class="form-control " + ("is-invalid" if form.frete_compra.errors else "")
+                                        ) }}
+                                    </div>
+                                    {% if form.frete_compra.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.frete_compra.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.frete_venda.id }}">{{
+                                        form.frete_venda.label.text }}</label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">R$</span>
+                                        {{ form.frete_venda(
+                                        class="form-control " + ("is-invalid" if form.frete_venda.errors else "")
+                                        ) }}
+                                    </div>
+                                    {% if form.frete_venda.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.frete_venda.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.contrato_manutencao.id }}">{{
+                                        form.contrato_manutencao.label.text }}</label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">R$</span>
+                                        {{ form.contrato_manutencao(
+                                        class="form-control " + ("is-invalid" if form.contrato_manutencao.errors else
+                                        "")
+                                        ) }}
+                                    </div>
+                                    {% if form.contrato_manutencao.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.contrato_manutencao.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.perc_pdi_garantia.id }}">{{
+                                        form.perc_pdi_garantia.label.text }}</label>
+                                    <div class="input-group input-group-sm">
+                                        {{ form.perc_pdi_garantia(
+                                        class="form-control " + ("is-invalid" if form.perc_pdi_garantia.errors else "")
+                                        ) }}
+                                        <span class="input-group-text">0 a 1</span>
+                                    </div>
+                                    {% if form.perc_pdi_garantia.description %}
+                                    <div class="form-text small">{{ form.perc_pdi_garantia.description }}</div>
+                                    {% endif %}
+                                    {% if form.perc_pdi_garantia.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.perc_pdi_garantia.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.perc_carta_fianca.id }}">{{
+                                        form.perc_carta_fianca.label.text }}</label>
+                                    <div class="input-group input-group-sm">
+                                        {{ form.perc_carta_fianca(
+                                        class="form-control " + ("is-invalid" if form.perc_carta_fianca.errors else "")
+                                        ) }}
+                                        <span class="input-group-text">0 a 1</span>
+                                    </div>
+                                    {% if form.perc_carta_fianca.description %}
+                                    <div class="form-text small">{{ form.perc_carta_fianca.description }}</div>
+                                    {% endif %}
+                                    {% if form.perc_carta_fianca.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.perc_carta_fianca.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label mb-1" for="{{ form.valor_cortesia.id }}">{{
+                                        form.valor_cortesia.label.text }}</label>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">R$</span>
+                                        {{ form.valor_cortesia(
+                                        class="form-control " + ("is-invalid" if form.valor_cortesia.errors else "")
+                                        ) }}
+                                    </div>
+                                    {% if form.valor_cortesia.errors %}
+                                    <div class="invalid-feedback d-block small">
+                                        {{ form.valor_cortesia.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botão -->
+                        <div class="d-flex justify-content-end mt-3 pt-2 border-top">
                             {{ form.submit(class="btn btn-primary px-4 fw-semibold") }}
                         </div>
-
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- Coluna direita: resultado do cálculo -->
-        <div class="col-lg-5">
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-header border-0 bg-white">
-                    <div class="d-flex justify-content-between align-items-center">
+        <!-- Coluna direita, resultado -->
+        <div class="col-xl-5">
+            <div class="card border-0 shadow-sm rounded-4 mb-3">
+                <div class="card-body p-3 p-md-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
                         <div>
-                            <h2 class="h6 mb-1 fw-semibold">Resumo da margem</h2>
+                            <h2 class="h5 fw-semibold mb-1">Resumo da simulação</h2>
                             {% if calculo %}
-                            <small class="text-muted">Resultados calculados com base nos parâmetros vigentes.</small>
+                            <p class="text-muted small mb-0">Resultados calculados com base nos parâmetros vigentes.</p>
                             {% else %}
-                            <small class="text-muted">Preencha o formulário ao lado e clique em “Calcular
-                                margem”.</small>
+                            <p class="text-muted small mb-0">Nenhuma simulação ainda. Preencha o formulário ao lado e
+                                calcule.</p>
                             {% endif %}
                         </div>
-                        <span class="badge bg-primary-subtle text-primary fw-semibold">
-                            Passo 2 • Resultado
+                        <span class="badge bg-success-subtle text-success fw-semibold">
+                            Passo 2
                         </span>
                     </div>
-                </div>
 
-                <div class="card-body">
                     {% if calculo %}
-                    <!-- KPIs principais -->
-                    <div class="row g-3 mb-3">
-                        <div class="col-12">
-                            <div class="p-3 rounded-3 bg-primary text-white">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <div class="small text-uppercase opacity-75 fw-semibold">Valor de venda total
-                                        </div>
-                                        <div class="fs-4 fw-bold">
-                                            R$ {{ "%.2f"|format(calculo.valor_venda_total) }}
-                                        </div>
-                                    </div>
-                                    <div class="text-end">
-                                        <div class="small text-uppercase opacity-75 fw-semibold">Margem contrib.</div>
-                                        <div class="fs-5 fw-bold">
-                                            {{ (calculo.margem_contrib_percent * 100) | round(2) }}%
-                                        </div>
-                                    </div>
+                    {% set margem_pc = (calculo.margem_contrib_percent * 100) %}
+                    <div class="d-flex flex-column align-items-center mb-3">
+                        <div class="rounded-circle border border-3 border-success-subtle d-flex flex-column justify-content-center align-items-center"
+                            style="width: 140px; height: 140px;">
+                            <span class="small text-muted text-uppercase">Margem contrib.</span>
+                            <span class="fs-3 fw-bold">
+                                {{ margem_pc | round(2) }}%
+                            </span>
+                        </div>
+                        <div class="w-100 mt-3">
+                            <div class="d-flex justify-content-between small text-muted mb-1">
+                                <span>Margem de contribuição</span>
+                                <span>{{ margem_pc | round(2) }}%</span>
+                            </div>
+                            <div class="progress" style="height: 7px;">
+                                <div class="progress-bar bg-success" role="progressbar"
+                                    style="width: {{ margem_pc | round(2) }}%;"
+                                    aria-valuenow="{{ margem_pc | round(2) }}" aria-valuemin="0" aria-valuemax="100">
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Margem bruta / contribuição -->
+                    <!-- Cards rápidos -->
                     <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <div class="border rounded-3 p-3 h-100">
-                                <div class="small text-muted text-uppercase fw-semibold mb-1">Margem bruta</div>
+                        <div class="col-6">
+                            <div class="border rounded-3 p-2 p-md-3 h-100">
+                                <div class="small text-muted text-uppercase fw-semibold mb-1">Valor de venda</div>
+                                <div class="fw-bold">
+                                    R$ {{ "%.2f"|format(calculo.valor_venda_total) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded-3 p-2 p-md-3 h-100">
+                                <div class="small text-muted text-uppercase fw-semibold mb-1">CMV total</div>
+                                <div class="fw-bold">
+                                    R$ {{ "%.2f"|format(calculo.cmv_total) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="border rounded-3 p-2 p-md-3 h-100">
+                                <div class="small text-muted text-uppercase fw-semibold mb-1">Lucro bruto</div>
                                 <div class="fw-bold mb-1">
                                     R$ {{ "%.2f"|format(calculo.lucro_bruto_valor) }}
                                 </div>
-                                <div class="badge bg-success-subtle text-success">
+                                <span class="badge bg-secondary-subtle text-secondary">
                                     {{ (calculo.margem_bruta_percent * 100) | round(2) }}%
-                                </div>
+                                </span>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="border rounded-3 p-3 h-100">
-                                <div class="small text-muted text-uppercase fw-semibold mb-1">Margem de contribuição
-                                </div>
-                                <div class="fw-bold mb-1">
+                        <div class="col-6">
+                            <div class="border rounded-3 p-2 p-md-3 h-100">
+                                <div class="small text-muted text-uppercase fw-semibold mb-1">Margem contrib. (R$)</div>
+                                <div class="fw-bold">
                                     R$ {{ "%.2f"|format(calculo.margem_contrib_valor) }}
                                 </div>
-                                <div class="badge bg-info-subtle text-info">
-                                    {{ (calculo.margem_contrib_percent * 100) | round(2) }}%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Abas de detalhamento -->
+                    <ul class="nav nav-pills nav-justified small mb-3" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="tab-custos" data-bs-toggle="tab"
+                                data-bs-target="#tab-custos-pane" type="button" role="tab"
+                                aria-controls="tab-custos-pane" aria-selected="true">
+                                Composição de custos
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab-financeiro" data-bs-toggle="tab"
+                                data-bs-target="#tab-financeiro-pane" type="button" role="tab"
+                                aria-controls="tab-financeiro-pane" aria-selected="false">
+                                Financeiro & comissão
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <!-- Custos -->
+                        <div class="tab-pane fade show active" id="tab-custos-pane" role="tabpanel"
+                            aria-labelledby="tab-custos">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="border rounded-3 p-2 p-md-3">
+                                        <div class="small text-muted text-uppercase fw-semibold mb-2">Impostos & DN
+                                        </div>
+                                        <ul class="list-unstyled small mb-0">
+                                            <li class="d-flex justify-content-between mb-1">
+                                                <span>Impostos sobre venda</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.impostos_venda_total) }}</span>
+                                            </li>
+                                            <li class="d-flex justify-content-between mb-1">
+                                                <span>DN (custo base máquina)</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.valor_dn) }}</span>
+                                            </li>
+                                            <li class="d-flex justify-content-between mb-1">
+                                                <span>Impostos na compra</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.impostos_compra_total) }}</span>
+                                            </li>
+                                            <li class="d-flex justify-content-between">
+                                                <span class="fw-semibold">CMV total</span>
+                                                <span class="fw-semibold">R$ {{ "%.2f"|format(calculo.cmv_total)
+                                                    }}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="border rounded-3 p-2 p-md-3">
+                                        <div class="small text-muted text-uppercase fw-semibold mb-2">Outros custos
+                                            operacionais</div>
+                                        <ul class="list-unstyled small mb-0">
+                                            <li class="d-flex justify-content-between mb-1">
+                                                <span>Opcionais / agrega / desagrega</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.valor_opcionais) }}</span>
+                                            </li>
+                                            <li class="d-flex justify-content-between mb-1">
+                                                <span>Frete compra</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.frete_compra) }}</span>
+                                            </li>
+                                            <li class="d-flex justify-content-between mb-1">
+                                                <span>Crédito impostos frete compra</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.credito_impostos_frete_compra)
+                                                    }}</span>
+                                            </li>
+                                            <li class="d-flex justify-content-between mb-1">
+                                                <span>Mão de obra</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.custo_mao_obra) }}</span>
+                                            </li>
+                                            <li class="d-flex justify-content-between mb-1">
+                                                <span>Contrato de manutenção</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.contrato_manutencao) }}</span>
+                                            </li>
+                                            <li class="d-flex justify-content-between">
+                                                <span>PDI / Garantia</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.valor_pdi_garantia) }}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Detalhamento de custos -->
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <div class="border rounded-3 p-3 h-100">
-                                <div class="small text-muted text-uppercase fw-semibold mb-2">Estrutura de custos</div>
-                                <ul class="list-unstyled small mb-0">
-                                    <li class="d-flex justify-content-between mb-1">
-                                        <span>Impostos sobre venda</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.impostos_venda_total) }}</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-1">
-                                        <span>DN (custo base máquina)</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.valor_dn) }}</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-1">
-                                        <span>Impostos na compra</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.impostos_compra_total) }}</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between">
-                                        <span>CMV total</span>
-                                        <span class="fw-semibold">R$ {{ "%.2f"|format(calculo.cmv_total) }}</span>
-                                    </li>
-                                </ul>
+                        <!-- Financeiro e comissão -->
+                        <div class="tab-pane fade" id="tab-financeiro-pane" role="tabpanel"
+                            aria-labelledby="tab-financeiro">
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="border rounded-3 p-2 p-md-3 mb-2">
+                                        <div class="small text-muted text-uppercase fw-semibold mb-2">Custos pós-lucro
+                                        </div>
+                                        <ul class="list-unstyled small mb-0">
+                                            <li class="d-flex justify-content-between mb-1">
+                                                <span>Frete venda</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.frete_venda) }}</span>
+                                            </li>
+                                            <li class="d-flex justify-content-between mb-1">
+                                                <span>Crédito impostos frete venda</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.credito_impostos_frete_venda)
+                                                    }}</span>
+                                            </li>
+                                            <li class="d-flex justify-content-between mb-1">
+                                                <span>Custo financeiro total</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.custo_financeiro_total) }}</span>
+                                            </li>
+                                            <li class="d-flex justify-content-between mb-1">
+                                                <span>Carta fiança</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.valor_carta_fianca) }}</span>
+                                            </li>
+                                            <li class="d-flex justify-content-between">
+                                                <span>Cortesias</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.valor_cortesia) }}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="border rounded-3 p-2 p-md-3 mb-2">
+                                        <div class="small text-muted text-uppercase fw-semibold mb-2">Comissão do
+                                            vendedor</div>
+                                        <ul class="list-unstyled small mb-0">
+                                            <li class="d-flex justify-content-between mb-1">
+                                                <span>Comissão bruta</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.comissao_bruta) }}</span>
+                                            </li>
+                                            <li class="d-flex justify-content-between mb-1">
+                                                <span>DSR</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.comissao_dsr) }}</span>
+                                            </li>
+                                            <li class="d-flex justify-content-between mb-1">
+                                                <span>Encargos</span>
+                                                <span>R$ {{ "%.2f"|format(calculo.comissao_encargos) }}</span>
+                                            </li>
+                                            <li class="d-flex justify-content-between">
+                                                <span class="fw-semibold">Comissão total</span>
+                                                <span class="fw-semibold">R$ {{ "%.2f"|format(calculo.comissao_total)
+                                                    }}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                {% if calculo.fluxo_parcelas %}
+                                <div class="col-12">
+                                    <div class="border rounded-3 p-2 p-md-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div class="small text-muted text-uppercase fw-semibold">
+                                                Fluxo de pagamento
+                                            </div>
+                                            <small class="text-muted">Entrada e parcelas com custo financeiro.</small>
+                                        </div>
+
+                                        <div class="table-responsive">
+                                            <table class="table table-sm align-middle mb-0">
+                                                <thead class="table-light small">
+                                                    <tr>
+                                                        <th>Tipo</th>
+                                                        <th class="text-center">Parcela</th>
+                                                        <th class="text-center">Prazo (dias)</th>
+                                                        <th class="text-end">% base</th>
+                                                        <th class="text-end">Valor nominal</th>
+                                                        <th class="text-end">Tx. efetiva</th>
+                                                        <th class="text-end">Valor presente</th>
+                                                        <th class="text-end">Custo financeiro</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="small">
+                                                    {% for p in calculo.fluxo_parcelas %}
+                                                    <tr>
+                                                        <td>
+                                                            {% if p.tipo_parcela == 1 %}
+                                                            <span
+                                                                class="badge bg-secondary-subtle text-secondary">Entrada</span>
+                                                            {% else %}
+                                                            <span
+                                                                class="badge bg-primary-subtle text-primary">Parcela</span>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td class="text-center">{{ p.numero_parcela }}</td>
+                                                        <td class="text-center">{{ p.prazo_dias }}</td>
+                                                        <td class="text-end">
+                                                            {{ (p.percentual_base * 100) | round(2) }}%
+                                                        </td>
+                                                        <td class="text-end">
+                                                            R$ {{ "%.2f"|format(p.valor_nominal) }}
+                                                        </td>
+                                                        <td class="text-end">
+                                                            {{ (p.taxa_efetiva * 100) | round(3) }}%
+                                                        </td>
+                                                        <td class="text-end">
+                                                            R$ {{ "%.2f"|format(p.valor_presente) }}
+                                                        </td>
+                                                        <td class="text-end">
+                                                            R$ {{ "%.2f"|format(p.custo_financeiro) }}
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
-
-                        <div class="col-md-6">
-                            <div class="border rounded-3 p-3 h-100">
-                                <div class="small text-muted text-uppercase fw-semibold mb-2">Outros custos</div>
-                                <ul class="list-unstyled small mb-0">
-                                    <li class="d-flex justify-content-between mb-1">
-                                        <span>Opcionais / agrega / desagrega</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.valor_opcionais) }}</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-1">
-                                        <span>Frete compra</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.frete_compra) }}</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-1">
-                                        <span>Crédito imp. frete compra</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.credito_impostos_frete_compra) }}</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-1">
-                                        <span>Mão de obra</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.custo_mao_obra) }}</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-1">
-                                        <span>Contrato de manutenção</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.contrato_manutencao) }}</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between">
-                                        <span>PDI / Garantia</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.valor_pdi_garantia) }}</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
                     </div>
-
-                    <!-- Pós-lucro: frete venda, financeiro, comissão -->
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <div class="border rounded-3 p-3 h-100">
-                                <div class="small text-muted text-uppercase fw-semibold mb-2">Custos pós-lucro</div>
-                                <ul class="list-unstyled small mb-0">
-                                    <li class="d-flex justify-content-between mb-1">
-                                        <span>Frete venda</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.frete_venda) }}</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-1">
-                                        <span>Crédito imp. frete venda</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.credito_impostos_frete_venda) }}</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-1">
-                                        <span>Custo financeiro total</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.custo_financeiro_total) }}</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-1">
-                                        <span>Carta fiança</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.valor_carta_fianca) }}</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between">
-                                        <span>Cortesias</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.valor_cortesia) }}</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="border rounded-3 p-3 h-100">
-                                <div class="small text-muted text-uppercase fw-semibold mb-2">Comissão vendedor</div>
-                                <ul class="list-unstyled small mb-0">
-                                    <li class="d-flex justify-content-between mb-1">
-                                        <span>Comissão bruta</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.comissao_bruta) }}</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-1">
-                                        <span>DSR</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.comissao_dsr) }}</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-1">
-                                        <span>Encargos</span>
-                                        <span>R$ {{ "%.2f"|format(calculo.comissao_encargos) }}</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between">
-                                        <span class="fw-semibold">Comissão total</span>
-                                        <span class="fw-semibold">R$ {{ "%.2f"|format(calculo.comissao_total) }}</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Fluxo de pagamento -->
-                    {% if calculo.fluxo_parcelas %}
-                    <div class="border rounded-3 p-3">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div class="small text-muted text-uppercase fw-semibold">Fluxo de pagamento</div>
-                            <small class="text-muted">Entrada + parcelas com custo financeiro estimado.</small>
-                        </div>
-
-                        <div class="table-responsive">
-                            <table class="table table-sm align-middle mb-0">
-                                <thead class="table-light">
-                                    <tr class="small text-muted">
-                                        <th>Tipo</th>
-                                        <th class="text-center">Parcela</th>
-                                        <th class="text-center">Prazo (dias)</th>
-                                        <th class="text-end">% base</th>
-                                        <th class="text-end">Valor nominal</th>
-                                        <th class="text-end">Tx. efetiva</th>
-                                        <th class="text-end">Valor presente</th>
-                                        <th class="text-end">Custo financeiro</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for p in calculo.fluxo_parcelas %}
-                                    <tr class="small">
-                                        <td>
-                                            {% if p.tipo_parcela == 1 %}
-                                            <span class="badge bg-secondary-subtle text-secondary">Entrada</span>
-                                            {% else %}
-                                            <span class="badge bg-primary-subtle text-primary">Parcela</span>
-                                            {% endif %}
-                                        </td>
-                                        <td class="text-center">{{ p.numero_parcela }}</td>
-                                        <td class="text-center">{{ p.prazo_dias }}</td>
-                                        <td class="text-end">
-                                            {{ (p.percentual_base * 100) | round(2) }}%
-                                        </td>
-                                        <td class="text-end">
-                                            R$ {{ "%.2f"|format(p.valor_nominal) }}
-                                        </td>
-                                        <td class="text-end">
-                                            {{ (p.taxa_efetiva * 100) | round(3) }}%
-                                        </td>
-                                        <td class="text-end">
-                                            R$ {{ "%.2f"|format(p.valor_presente) }}
-                                        </td>
-                                        <td class="text-end">
-                                            R$ {{ "%.2f"|format(p.custo_financeiro) }}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    {% endif %}
-
                     {% else %}
                     <div class="text-center text-muted py-4">
                         <div class="mb-2">
@@ -697,7 +776,7 @@
                                 Nenhuma simulação realizada
                             </span>
                         </div>
-                        <p class="mb-0">
+                        <p class="mb-1">
                             Preencha os dados da reserva ao lado e clique em
                             <strong>“Calcular margem”</strong> para visualizar o resumo aqui.
                         </p>
