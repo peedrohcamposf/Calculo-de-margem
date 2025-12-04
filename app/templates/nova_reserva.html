@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+{% set title = "Nova Reserva - Cálculo de Margem" %}
+
+{% block content %}
+<div class="container-fluid py-3">
+    <div class="row justify-content-center">
+        <div class="col-12 d-flex justify-content-center">
+
+            <form method="post" novalidate>
+                {{ form.hidden_tag() }}
+
+                {% if form.errors %}
+                <div class="alert alert-danger py-2 px-3 small mb-3">
+                    <strong>Ops!</strong> Alguns campos precisam de atenção.
+                </div>
+                {% endif %}
+
+                <div class="card shadow-sm border-0 w-100" style="max-width:95vw;">
+                    <div class="card-header border-0 bg-light">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <h1 class="h6 mb-1 text-uppercase text-muted fw-semibold">
+                                    Nova Reserva
+                                </h1>
+                            </div>
+                            <span class="badge rounded-pill text-bg-secondary opacity-75">
+                                Cálculo de margem
+                            </span>
+                        </div>
+
+                        <ul class="nav nav-tabs card-header-tabs mt-3 small" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="tab-dados-comerciais" data-bs-toggle="tab"
+                                    data-bs-target="#pane-dados-comerciais" type="button" role="tab"
+                                    aria-controls="pane-dados-comerciais" aria-selected="true">
+                                    Dados comerciais
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-maquina" data-bs-toggle="tab"
+                                    data-bs-target="#pane-maquina" type="button" role="tab" aria-controls="pane-maquina"
+                                    aria-selected="false">
+                                    Máquina
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tab-condicoes" data-bs-toggle="tab"
+                                    data-bs-target="#pane-condicoes" type="button" role="tab"
+                                    aria-controls="pane-condicoes" aria-selected="false">
+                                    Condições financeiras
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="card-body p-3">
+                        <div class="tab-content">
+
+                            <!-- Dados comerciais -->
+                            <div class="tab-pane fade show active" id="pane-dados-comerciais" role="tabpanel"
+                                aria-labelledby="tab-dados-comerciais">
+                                <div class="row g-3 align-items-end">
+
+                                    <div class="col-md-6">
+                                        <label class="form-label mb-1 small">{{ form.cliente.label }}</label>
+                                        {{ form.cliente(class="form-control form-control-sm", placeholder="C00002 -
+                                        CLIENTE TESTE 2") }}
+                                        {% for error in form.cliente.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label mb-1 small">{{ form.empresa.label }}</label>
+                                        {{ form.empresa(class="form-select form-select-sm", id="empresa") }}
+                                        {% for error in form.empresa.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label mb-1 small">{{ form.filial.label }}</label>
+                                        {{ form.filial(class="form-select form-select-sm", id="filial") }}
+                                        {% for error in form.filial.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-1 small">{{ form.nome_vendedor.label }}</label>
+                                        {{ form.nome_vendedor(class="form-control form-control-sm", placeholder="ALISSON
+                                        CARNELÓS") }}
+                                        {% for error in form.nome_vendedor.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label mb-1 small">{{ form.data_reserva.label }}</label>
+                                        {{ form.data_reserva(class="form-control form-control-sm",
+                                        placeholder="dd/mm/aaaa") }}
+                                        {% for error in form.data_reserva.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label mb-1 small">{{ form.previsao_entrega.label }}</label>
+                                        {{ form.previsao_entrega(class="form-control form-control-sm",
+                                        placeholder="mm/aa") }}
+                                        {% for error in form.previsao_entrega.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label class="form-label mb-1 small">{{ form.possui_af.label }}</label>
+                                        {{ form.possui_af(class="form-select form-select-sm") }}
+                                        {% for error in form.possui_af.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Máquina -->
+                            <div class="tab-pane fade" id="pane-maquina" role="tabpanel" aria-labelledby="tab-maquina">
+                                <div class="row g-3 align-items-end">
+
+                                    <div class="col-md-8">
+                                        <label class="form-label mb-1 small">{{ form.maquina_id.label }}</label>
+                                        {{ form.maquina_id(class="form-select form-select-sm") }}
+                                        <small class="text-muted d-block mt-1 small">
+                                            Selecione uma máquina cadastrada no banco de dados.
+                                        </small>
+                                        {% for error in form.maquina_id.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-1 small">{{ form.filtro_maquina.label }}</label>
+                                        {{ form.filtro_maquina(class="form-control form-control-sm",
+                                        placeholder="Filtrar por código/modelo") }}
+                                        <small class="text-muted d-block mt-1 small">
+                                            Digite e envie o formulário para refinar a lista.
+                                        </small>
+                                        {% for error in form.filtro_maquina.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label class="form-label mb-1 small">{{ form.quantidade.label }}</label>
+                                        <div class="input-group input-group-sm">
+                                            {{ form.quantidade(class="form-control text-end") }}
+                                        </div>
+                                        {% for error in form.quantidade.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Condições financeiras -->
+                            <div class="tab-pane fade" id="pane-condicoes" role="tabpanel"
+                                aria-labelledby="tab-condicoes">
+                                <div class="row g-3 align-items-end">
+
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-1 small">{{ form.tipo_venda.label }}</label>
+                                        {{ form.tipo_venda(class="form-select form-select-sm") }}
+                                        {% for error in form.tipo_venda.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-1 small">{{ form.modalidade_financiamento.label
+                                            }}</label>
+                                        {{ form.modalidade_financiamento(class="form-control form-control-sm",
+                                        placeholder="N/A") }}
+                                        {% for error in form.modalidade_financiamento.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label mb-1 small">{{ form.banco_financiamento.label
+                                            }}</label>
+                                        {{ form.banco_financiamento(class="form-control form-control-sm",
+                                        placeholder="N/A") }}
+                                        {% for error in form.banco_financiamento.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <label class="form-label mb-1 small">{{ form.contato_banco.label }}</label>
+                                        {{ form.contato_banco(class="form-control form-control-sm") }}
+                                        {% for error in form.contato_banco.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="card-footer bg-white border-0 d-flex justify-content-end gap-2 py-2">
+                        <a href="{{ url_for('home.nova_reserva') }}" class="btn btn-outline-secondary btn-sm">
+                            Limpar
+                        </a>
+                        <button type="submit" id="btn-submit" class="btn btn-primary btn-sm">
+                            Validar dados
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        // Esses valores também estão no Flask
+        const EMPRESA_FILIAIS = {
+            brasif: [
+                "Belo Horizonte", "Brasilia", "Cuiabá", "Curitiba",
+                "Goiânia", "Jundiaí", "Palmas", "Ribeirão Preto",
+                "Rio de Janeiro", "Serra"
+            ],
+            brasifagro: [
+                "Luís Eduardo Magalhães", "Roda Velha",
+                "Correntina", "Formosa do Rio Preto", "Bom Jesus"
+            ]
+        };
+
+        const empresaSelect = document.getElementById("empresa");
+        const filialSelect = document.getElementById("filial");
+        const submitBtn = document.getElementById("btn-submit");
+        const tabLinks = document.querySelectorAll(".nav-tabs .nav-link");
+
+        function preencherFiliais() {
+            const empresa = empresaSelect.value;
+            const filiais = EMPRESA_FILIAIS[empresa] || [];
+            const filialAtual = filialSelect.value;
+
+            filialSelect.innerHTML = "";
+
+            filiais.forEach(function (nome) {
+                const opt = document.createElement("option");
+                opt.value = nome;
+                opt.textContent = nome;
+                filialSelect.appendChild(opt);
+            });
+
+            if (filialAtual && filiais.includes(filialAtual)) {
+                filialSelect.value = filialAtual;
+            }
+        }
+
+        function atualizarTemaEmpresa() {
+            if (!empresaSelect) return;
+
+            const isBrasifAgro = empresaSelect.value === "brasifagro";
+
+            // Botão primary/danger
+            if (submitBtn) {
+                if (isBrasifAgro) {
+                    submitBtn.classList.remove("btn-primary");
+                    submitBtn.classList.add("btn-danger");
+                } else {
+                    submitBtn.classList.add("btn-primary");
+                    submitBtn.classList.remove("btn-danger");
+                }
+            }
+
+            // - Brasif Agro: abas inativas vermelhas, aba ativa preta
+            // - Outras opções: cores padrão do Bootstrap
+            tabLinks.forEach(function (link) {
+                const isActive = link.classList.contains("active");
+
+                if (isBrasifAgro) {
+                    if (isActive) {
+                        // Aba ativa: sem vermelho, usa cor padrão (preta)
+                        link.classList.remove("text-danger");
+                    } else {
+                        // Abas inativas: vermelhas
+                        link.classList.add("text-danger");
+                    }
+                } else {
+                    // Brasif / vazio: padrão
+                    link.classList.remove("text-danger");
+                }
+            });
+        }
+
+        if (empresaSelect && filialSelect) {
+            empresaSelect.addEventListener("change", function () {
+                preencherFiliais();
+                atualizarTemaEmpresa();
+            });
+
+            // Atualiza tema sempre que trocar de aba
+            tabLinks.forEach(function (link) {
+                link.addEventListener("shown.bs.tab", function () {
+                    atualizarTemaEmpresa();
+                });
+            });
+
+            // Estado inicial
+            if (empresaSelect.value) {
+                preencherFiliais();
+            }
+            atualizarTemaEmpresa();
+        }
+    })();
+</script>
+
+{% endblock %}
