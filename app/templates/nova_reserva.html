@@ -97,8 +97,7 @@
 
                                     <div class="col-md-3">
                                         <label class="form-label mb-1 small">{{ form.data_reserva.label }}</label>
-                                        {{ form.data_reserva(class="form-control form-control-sm",
-                                        placeholder="dd/mm/aaaa") }}
+                                        {{ form.data_reserva(class="form-control form-control-sm") }}
                                         {% for error in form.data_reserva.errors %}
                                         <div class="text-danger small">{{ error }}</div>
                                         {% endfor %}

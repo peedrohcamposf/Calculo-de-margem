@@ -112,9 +112,10 @@ class NovaReservaForm(FlaskForm):
     )
 
     data_reserva = DateField(
-        "Data da Reserva (dd/mm/aa)",
-        format="%d/%m/%Y",
+        "Data da Reserva",
+        format="%Y-%m-%d",
         validators=[DataRequired(message="Informe a data da reserva.")],
+        render_kw={"type": "date"},
     )
 
     banco_financiamento = StringField(
