@@ -151,6 +151,40 @@ class NovaReservaForm(FlaskForm):
         description="Use o formato mm/aa, por exemplo 10/25",
     )
 
+    # Análise de Margens / Impostos Venda
+    valor_venda = DecimalField(
+        "Valor de venda",
+        places=2,
+        validators=[
+            DataRequired(message="Informe o valor de venda."),
+            NumberRange(min=0.01, message="Valor de venda deve ser maior que zero."),
+        ],
+    )
+
+    icms_percent = DecimalField(
+        "% ICMS",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(min=0, max=100, message="ICMS deve estar entre 0% e 100%."),
+        ],
+    )
+
+    pis_cofins_percent = DecimalField(
+        "% PIS/COFINS",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(
+                min=0,
+                max=100,
+                message="PIS/COFINS deve estar entre 0% e 100%.",
+            ),
+        ],
+    )
+
     # Validações customizadas
     def validate_filial(self, field: SelectField) -> None:
         empresa = self.empresa.data

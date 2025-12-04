@@ -209,6 +209,64 @@
                             </div>
 
                         </div>
+
+                        <!-- Análise de Margens / Impostos Venda -->
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h2 class="h6 mb-0 text-muted text-uppercase small">
+                                Análise de margens — impostos sobre venda
+                            </h2>
+                            <small class="text-muted small">
+                                (ICMS + PIS/COFINS) × Valor de venda
+                            </small>
+                        </div>
+
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4 col-lg-3">
+                                <label class="form-label mb-1 small">{{ form.valor_venda.label }}</label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">R$</span>
+                                    {{ form.valor_venda(class="form-control text-end") }}
+                                </div>
+                                {% for error in form.valor_venda.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-3 col-lg-2">
+                                <label class="form-label mb-1 small">{{ form.icms_percent.label }}</label>
+                                <div class="input-group input-group-sm">
+                                    {{ form.icms_percent(class="form-control text-end") }}
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                {% for error in form.icms_percent.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-3 col-lg-2">
+                                <label class="form-label mb-1 small">{{ form.pis_cofins_percent.label }}</label>
+                                <div class="input-group input-group-sm">
+                                    {{ form.pis_cofins_percent(class="form-control text-end") }}
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                {% for error in form.pis_cofins_percent.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-4 col-lg-3 ms-auto">
+                                <label class="form-label mb-1 small">Impostos sobre venda</label>
+                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                    {% if impostos_venda_formatado %}
+                                    R$ {{ impostos_venda_formatado }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="card-footer bg-white border-0 d-flex justify-content-end gap-2 py-2">

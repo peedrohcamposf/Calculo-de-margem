@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from decimal import Decimal
+
 from flask import (
     Blueprint,
     render_template,
@@ -11,9 +13,17 @@ from sqlalchemy import or_
 
 from app.domain import MaquinaModel
 from app.forms.home_forms import NovaReservaForm, EMPRESA_FILIAIS
+from app.service.nova_reserva_service import calcular_impostos_venda
 from app.extensions import db
 
 home_bp = Blueprint("home", __name__)
+
+def _formatar_brl(valor: Decimal | None) -> str | None:
+    if valor is None:
+        return None
+    s = f"{valor:,.2f}"
+    # Converte para padrão brasileiro: 1.234.567,89
+    return s.replace(",", "X").replace(".", ",").replace("X", ".")
 
 
 @home_bp.route("/", methods=["GET", "POST"])
@@ -61,8 +71,19 @@ def nova_reserva():
         (m.id_maquina, f"{m.codigo} - {m.modelo}") for m in maquinas
     ]
 
+    impostos_venda = None
+    impostos_venda_formatado = None
+
     # Só valida os dados, não insere nada no BD
     if form.validate_on_submit():
+        # Cálculo de impostos de venda (ICMS + PIS/COFINS) * Valor de venda
+        impostos_venda = calcular_impostos_venda(
+            form.valor_venda.data,
+            form.icms_percent.data,
+            form.pis_cofins_percent.data,
+        )
+        impostos_venda_formatado = _formatar_brl(impostos_venda)
+
         flash(
             "Dados da reserva validados com sucesso (ainda sem gravar no banco).",
             "success",
@@ -71,4 +92,6 @@ def nova_reserva():
     return render_template(
         "nova_reserva.html",
         form=form,
+        impostos_venda=impostos_venda,
+        impostos_venda_formatado=impostos_venda_formatado,
     )
