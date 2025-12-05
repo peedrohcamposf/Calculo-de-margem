@@ -46,20 +46,16 @@ body {
 
 /* Logo abstrata */
 .login-logo {
-    width: 64px;
-    height: 64px;
-    border-radius: 18px;
-    background: radial-gradient(circle at 20% 20%, #ffffff 0, #c5cbff 28%, #4e5bff 80%);
-    box-shadow:
-        0 16px 40px rgba(0, 0, 0, 0.55),
-        0 0 0 1px rgba(255, 255, 255, 0.12);
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 4px;
-    padding: 8px;
-    margin: 0 auto 20px;
+    width: 50%;
+    margin: 0 auto;
     position: relative;
     overflow: hidden;
+}
+
+.login-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 /* Título e texto */

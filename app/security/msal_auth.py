@@ -187,7 +187,7 @@ def login_page():
     if current_user.is_authenticated:
         return _redirect_home()
 
-    return render_template("auth/login.html")
+    return render_template("login.html")
 
 
 # Início do fluxo de login usando MSAL
