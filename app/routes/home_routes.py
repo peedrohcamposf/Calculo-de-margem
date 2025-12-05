@@ -22,6 +22,7 @@ from app.service.nova_reserva_service import (
     calcular_entrega_tecnica_pdi_garantia,
     calcular_cmv,
     calcular_lucro_bruto,
+    calcular_carta_fianca,
 )
 from app.extensions import db
 
@@ -148,6 +149,9 @@ def nova_reserva():
     lucro_bruto_valor = None
     lucro_bruto_valor_formatado = None
 
+    carta_fianca_valor = None
+    carta_fianca_valor_formatado = None
+
     # Só valida os dados, não insere nada no BD
     if form.validate_on_submit():
         # Cálculo de impostos de venda (ICMS + PIS/COFINS) * Valor de venda
@@ -157,6 +161,17 @@ def nova_reserva():
             form.pis_cofins_percent.data,
         )
         impostos_venda_formatado = _formatar_brl(impostos_venda)
+
+        # Carta fiança bancária = % sobre valor de venda
+        if (
+            form.valor_venda.data is not None
+            and form.carta_fianca_percent.data is not None
+        ):
+            carta_fianca_valor = calcular_carta_fianca(
+                form.valor_venda.data,
+                form.carta_fianca_percent.data,
+            )
+            carta_fianca_valor_formatado = _formatar_brl(carta_fianca_valor)
 
         # Contrato de manutenção (valor direto informado)
         if form.contrato_manutencao.data is not None:
@@ -296,4 +311,6 @@ def nova_reserva():
         entrega_tecnica_pdi_garantia_valor_formatado=entrega_tecnica_pdi_garantia_valor_formatado,
         lucro_bruto_valor=lucro_bruto_valor,
         lucro_bruto_valor_formatado=lucro_bruto_valor_formatado,
+        carta_fianca_valor=carta_fianca_valor,
+        carta_fianca_valor_formatado=carta_fianca_valor_formatado,
     )

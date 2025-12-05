@@ -116,6 +116,36 @@ def calcular_entrega_tecnica_pdi_garantia(
     return total.quantize(Decimal("0.01"))
 
 
+def calcular_entrega_tecnica_pdi_garantia(
+    valor_venda,
+    percent,
+) -> Optional[Decimal]:
+    # Entrega Técnica / PDI / Garantia (R$) = (% / 100) * Valor de venda
+    if valor_venda is None:
+        return None
+
+    base = _to_decimal(valor_venda)
+    percentual = _to_decimal(percent) / Decimal("100")
+
+    total = base * percentual
+    return total.quantize(Decimal("0.01"))
+
+
+def calcular_carta_fianca(
+    valor_venda,
+    carta_fianca_percent,
+) -> Optional[Decimal]:
+    # Carta fiança bancária (R$) = (% / 100) * Valor de venda
+    if valor_venda is None:
+        return None
+
+    base = _to_decimal(valor_venda)
+    percentual = _to_decimal(carta_fianca_percent) / Decimal("100")
+
+    total = base * percentual
+    return total.quantize(Decimal("0.01"))
+
+
 def calcular_cmv(
     valor_maquina,
     impostos_compra=None,

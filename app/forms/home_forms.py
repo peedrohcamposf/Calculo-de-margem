@@ -308,6 +308,49 @@ class NovaReservaForm(FlaskForm):
         ],
     )
 
+    # Custo financeiro (R$)
+    custo_financeiro = DecimalField(
+        "Custo financeiro",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(
+                min=0,
+                message="O custo financeiro não pode ser negativo.",
+            ),
+        ],
+    )
+
+    # Carta fiança bancária (% sobre o valor de venda)
+    carta_fianca_percent = DecimalField(
+        "% Carta fiança bancária",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(
+                min=0,
+                max=100,
+                message="Percentual deve estar entre 0% e 100%.",
+            ),
+        ],
+    )
+
+    # Cortesia (R$)
+    cortesia = DecimalField(
+        "Cortesia",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(
+                min=0,
+                message="O valor da cortesia não pode ser negativo.",
+            ),
+        ],
+    )
+
     # Validações customizadas
     def validate_filial(self, field: SelectField) -> None:
         empresa = self.empresa.data
