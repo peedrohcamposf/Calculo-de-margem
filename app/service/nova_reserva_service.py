@@ -99,3 +99,35 @@ def calcular_credito_impostos(
 
     total = base * percentual
     return total.quantize(Decimal("0.01"))
+
+
+def calcular_cmv(
+    valor_maquina,
+    impostos_compra=None,
+    opcionais_valor=None,
+    frete_compra=None,
+    credito_impostos_valor=None,
+    mao_obra_valor=None,
+) -> Optional[Decimal]:
+    # CMV = Valor da máquina - Impostos de compra + Opcionais/Agrega/Desagrega + Frete compra - Crédito de impostos + Mão de obra agrega/desagrega
+    if valor_maquina is None:
+        return None
+
+    total = _to_decimal(valor_maquina)
+
+    if impostos_compra is not None:
+        total -= _to_decimal(impostos_compra)
+
+    if opcionais_valor is not None:
+        total += _to_decimal(opcionais_valor)
+
+    if frete_compra is not None:
+        total += _to_decimal(frete_compra)
+
+    if credito_impostos_valor is not None:
+        total -= _to_decimal(credito_impostos_valor)
+
+    if mao_obra_valor is not None:
+        total += _to_decimal(mao_obra_valor)
+
+    return total.quantize(Decimal("0.01"))

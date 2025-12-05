@@ -19,6 +19,7 @@ from app.service.nova_reserva_service import (
     calcular_total_horas_opcionais,
     calcular_mao_obra_agrega_desagrega,
     calcular_credito_impostos,
+    calcular_cmv,
 )
 from app.extensions import db
 
@@ -127,6 +128,12 @@ def nova_reserva():
     credito_impostos_valor = None
     credito_impostos_valor_formatado = None
 
+    valor_maquina_base = None
+    valor_maquina_base_formatado = None
+
+    cmv_valor = None
+    cmv_valor_formatado = None
+
     # Só valida os dados, não insere nada no BD
     if form.validate_on_submit():
         # Cálculo de impostos de venda (ICMS + PIS/COFINS) * Valor de venda
@@ -151,12 +158,18 @@ def nova_reserva():
             maquina_escolhida.valor_compra if maquina_escolhida is not None else None
         )
 
+        valor_maquina_base = valor_base_compra
+        if valor_maquina_base is not None:
+            valor_maquina_base_formatado = _formatar_brl(valor_maquina_base)
+
         impostos_compra = calcular_impostos_compra(
             valor_base_compra,
             form.icms_pis_compra_percent.data,
             form.pis_cofins_compra_percent.data,
         )
-        impostos_compra_formatado = _formatar_brl(impostos_compra)
+        impostos_compra_formatado = (
+            _formatar_brl(impostos_compra) if impostos_compra is not None else None
+        )
 
         # Mão de obra agrega/desagrega (horas x 200)
         if form.mao_obra_agrega_desagrega_horas.data is not None:
@@ -178,6 +191,18 @@ def nova_reserva():
             )
             credito_impostos_valor_formatado = _formatar_brl(credito_impostos_valor)
 
+        # CMV
+        if valor_maquina_base is not None:
+            cmv_valor = calcular_cmv(
+                valor_maquina=valor_maquina_base,
+                impostos_compra=impostos_compra,
+                opcionais_valor=total_horas_opcionais,
+                frete_compra=form.frete_compra.data,
+                credito_impostos_valor=credito_impostos_valor,
+                mao_obra_valor=mao_obra_agrega_desagrega_valor,
+            )
+            cmv_valor_formatado = _formatar_brl(cmv_valor)
+
         flash(
             "Dados da reserva validados com sucesso (ainda sem gravar no banco).",
             "success",
@@ -197,4 +222,8 @@ def nova_reserva():
         mao_obra_agrega_desagrega_valor_formatado=mao_obra_agrega_desagrega_valor_formatado,
         credito_impostos_valor=credito_impostos_valor,
         credito_impostos_valor_formatado=credito_impostos_valor_formatado,
+        valor_maquina_base=valor_maquina_base,
+        valor_maquina_base_formatado=valor_maquina_base_formatado,
+        cmv_valor=cmv_valor,
+        cmv_valor_formatado=cmv_valor_formatado,
     )

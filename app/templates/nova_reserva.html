@@ -267,6 +267,39 @@
                             </div>
                         </div>
 
+                        <!-- CMV -->
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h2 class="h6 mb-0 text-muted text-uppercase small">
+                                Custo da Mercadoria Vendida (CMV)
+                            </h2>
+                        </div>
+
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4 col-lg-3">
+                                <label class="form-label mb-1 small">Valor da máquina selecionada</label>
+                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                    {% if valor_maquina_base_formatado %}
+                                    R$ {{ valor_maquina_base_formatado }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 col-lg-3 ms-auto">
+                                <label class="form-label mb-1 small">CMV calculado</label>
+                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                    {% if cmv_valor_formatado %}
+                                    R$ {{ cmv_valor_formatado }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Análise de Margens / Impostos Compra -->
                         <hr class="my-4">
 
