@@ -26,6 +26,8 @@ from app.service.nova_reserva_service import (
     calcular_comissao_bruta,
     calcular_dsr,
     calcular_encargos_comissao,
+    calcular_total_comissao_vendedor,
+    calcular_percentual_comissao_sobre_venda,
 )
 from app.extensions import db
 
@@ -163,6 +165,12 @@ def nova_reserva():
 
     encargos_comissao_valor = None
     encargos_comissao_valor_formatado = None
+
+    comissao_total_vendedor_valor = None
+    comissao_total_vendedor_valor_formatado = None
+
+    comissao_total_vendedor_percent = None
+    comissao_total_vendedor_percent_formatado = None
 
     # Só valida os dados, não insere nada no BD
     if form.validate_on_submit():
@@ -324,8 +332,33 @@ def nova_reserva():
             )
             encargos_comissao_valor_formatado = _formatar_brl(encargos_comissao_valor)
 
+        # Comissão total do vendedor (R$ e % sobre o valor de venda)
+        if (
+            comissao_bruta_valor is not None
+            and dsr_valor is not None
+            and encargos_comissao_valor is not None
+            and form.valor_venda.data is not None
+        ):
+            comissao_total_vendedor_valor = calcular_total_comissao_vendedor(
+                comissao_bruta_valor,
+                dsr_valor,
+                encargos_comissao_valor,
+            )
+            comissao_total_vendedor_valor_formatado = _formatar_brl(
+                comissao_total_vendedor_valor
+            )
+
+            comissao_total_vendedor_percent = calcular_percentual_comissao_sobre_venda(
+                comissao_total_vendedor_valor,
+                form.valor_venda.data,
+            )
+            if comissao_total_vendedor_percent is not None:
+                comissao_total_vendedor_percent_formatado = _formatar_brl(
+                    comissao_total_vendedor_percent
+                )
+
         flash(
-            "Dados da reserva validados com sucesso (ainda sem gravar no banco).",
+            "Dados da reserva validados com sucesso.",
             "success",
         )
 
@@ -363,4 +396,8 @@ def nova_reserva():
         dsr_valor_formatado=dsr_valor_formatado,
         encargos_comissao_valor=encargos_comissao_valor,
         encargos_comissao_valor_formatado=encargos_comissao_valor_formatado,
+        comissao_total_vendedor_valor=comissao_total_vendedor_valor,
+        comissao_total_vendedor_valor_formatado=comissao_total_vendedor_valor_formatado,
+        comissao_total_vendedor_percent=comissao_total_vendedor_percent,
+        comissao_total_vendedor_percent_formatado=comissao_total_vendedor_percent_formatado,
     )

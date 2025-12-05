@@ -735,10 +735,36 @@
                                     Comissão do vendedor
                                 </h2>
                                 <small class="text-muted small">
-                                    Comissão bruta, DSR e encargos sobre comissão
+                                    Comissão bruta, DSR, encargos sobre comissão e total sobre a venda
                                 </small>
                             </div>
 
+                            <!-- Linha 1: Total da comissão do vendedor -->
+                            <div class="row g-3 align-items-end mb-2">
+                                <div class="col-md-4 col-lg-3">
+                                    <label class="form-label mb-1 small">Comissão total do vendedor (R$)</label>
+                                    <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                        {% if comissao_total_vendedor_valor_formatado %}
+                                        R$ {{ comissao_total_vendedor_valor_formatado }}
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-lg-3">
+                                    <label class="form-label mb-1 small">% Comissão total sobre a venda</label>
+                                    <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                        {% if comissao_total_vendedor_percent_formatado %}
+                                        {{ comissao_total_vendedor_percent_formatado }} %
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Linha 2: Comissão bruta, DSR, Encargos -->
                             <div class="row g-3 align-items-end mb-2">
                                 <!-- Comissão Bruta -->
                                 <div class="col-md-4 col-lg-3">

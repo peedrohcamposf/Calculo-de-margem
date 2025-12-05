@@ -235,3 +235,36 @@ def calcular_encargos_comissao(
 
     total = soma_base * percentual
     return total.quantize(Decimal("0.01"))
+
+
+def calcular_total_comissao_vendedor(
+    comissao_bruta,
+    dsr,
+    encargos_comissao,
+) -> Optional[Decimal]:
+
+    # Comissão total (R$) = Comissão Bruta + DSR + Encargos Comissão
+    if comissao_bruta is None and dsr is None and encargos_comissao is None:
+        return None
+
+    total = (
+        _to_decimal(comissao_bruta) + _to_decimal(dsr) + _to_decimal(encargos_comissao)
+    )
+    return total.quantize(Decimal("0.01"))
+
+
+def calcular_percentual_comissao_sobre_venda(
+    total_comissao,
+    valor_venda,
+) -> Optional[Decimal]:
+    # % Comissão = (Comissão total / Valor de venda) * 100
+    if total_comissao is None or valor_venda is None:
+        return None
+
+    base_venda = _to_decimal(valor_venda)
+    if base_venda == 0:
+        return None
+
+    fracao = _to_decimal(total_comissao) / base_venda
+    percentual = fracao * Decimal("100")
+    return percentual.quantize(Decimal("0.01"))
