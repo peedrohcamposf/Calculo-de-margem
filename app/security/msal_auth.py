@@ -407,4 +407,4 @@ def logout():
     session.clear()
 
     flash("Você saiu da sessão com sucesso.", "info")
-    return redirect(url_for("auth.login"))
+    return redirect(url_for("auth.login_page"))
