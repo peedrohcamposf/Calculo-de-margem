@@ -726,6 +726,84 @@
                                 <div class="text-danger small">{{ error }}</div>
                                 {% endfor %}
                             </div>
+
+                            <!-- Comissão do vendedor -->
+                            <hr class="my-4">
+
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h2 class="h6 mb-0 text-muted text-uppercase small">
+                                    Comissão do vendedor
+                                </h2>
+                                <small class="text-muted small">
+                                    Comissão bruta, DSR e encargos sobre comissão
+                                </small>
+                            </div>
+
+                            <div class="row g-3 align-items-end mb-2">
+                                <!-- Comissão Bruta -->
+                                <div class="col-md-4 col-lg-3">
+                                    <label class="form-label mb-1 small">{{ form.comissao_bruta_percent.label }}</label>
+                                    <div class="input-group input-group-sm mb-1">
+                                        {{ form.comissao_bruta_percent(class="form-control text-end") }}
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    {% for error in form.comissao_bruta_percent.errors %}
+                                    <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                    <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                        {% if comissao_bruta_valor_formatado %}
+                                        R$ {{ comissao_bruta_valor_formatado }}
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- DSR -->
+                                <div class="col-md-4 col-lg-3">
+                                    <label class="form-label mb-1 small">{{ form.dsr_percent.label }}</label>
+                                    <div class="input-group input-group-sm mb-1">
+                                        {{ form.dsr_percent(class="form-control text-end") }}
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    {% for error in form.dsr_percent.errors %}
+                                    <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                    <small class="text-muted d-block mb-1 small">
+                                        Calculado sobre a comissão bruta.
+                                    </small>
+                                    <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                        {% if dsr_valor_formatado %}
+                                        R$ {{ dsr_valor_formatado }}
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Encargos comissão -->
+                                <div class="col-md-4 col-lg-3">
+                                    <label class="form-label mb-1 small">{{ form.encargos_comissao_percent.label
+                                        }}</label>
+                                    <div class="input-group input-group-sm mb-1">
+                                        {{ form.encargos_comissao_percent(class="form-control text-end") }}
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    {% for error in form.encargos_comissao_percent.errors %}
+                                    <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                    <small class="text-muted d-block mb-1 small">
+                                        Calculado sobre (Comissão Bruta + DSR).
+                                    </small>
+                                    <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                        {% if encargos_comissao_valor_formatado %}
+                                        R$ {{ encargos_comissao_valor_formatado }}
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
