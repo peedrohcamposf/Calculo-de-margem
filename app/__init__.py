@@ -134,20 +134,36 @@ def create_app(config_class: type[Config] = Config) -> Flask:
     def inject_logout_form():
         return dict(logout_form=LogoutForm())
 
-    # Error handlers (fallbacks simples)
+    # Error handlers usando um template único (templates/erros.html)
     @app.errorhandler(401)
     def _handle_401(_e):
+        msg = "Não autenticado. Faça login para continuar."
         try:
-            return render_template("errors/401.html"), 401
+            return (
+                render_template(
+                    "erros.html",
+                    status_code=401,
+                    message=msg,
+                ),
+                401,
+            )
         except Exception:
-            return ("Não autenticado. Faça login para continuar.", 401)
+            return msg, 401
 
     @app.errorhandler(403)
     def _handle_403(_e):
+        msg = "Acesso negado. Você não tem permissão para esta página."
         try:
-            return render_template("errors/403.html"), 403
+            return (
+                render_template(
+                    "erros.html",
+                    status_code=403,
+                    message=msg,
+                ),
+                403,
+            )
         except Exception:
-            return ("Acesso negado. Você não tem permissão para esta página.", 403)
+            return msg, 403
 
     @app.errorhandler(RateLimitExceeded)
     def _handle_429(e: RateLimitExceeded):
@@ -190,17 +206,24 @@ def create_app(config_class: type[Config] = Config) -> Flask:
         if retry_after:
             headers["Retry-After"] = str(retry_after)
 
+        msg = (
+            f"Você excedeu o limite de requisições ({rule}). "
+            f"Tente novamente em {retry_after or 'alguns'} segundo(s)."
+        )
+
         try:
             return (
-                render_template("errors/429.html", retry_after=retry_after, rule=rule),
+                render_template(
+                    "erros.html",
+                    status_code=429,
+                    message=msg,
+                    retry_after=retry_after,
+                    rule=rule,
+                ),
                 429,
                 headers,
             )
         except Exception:
-            msg = (
-                f"Você excedeu o limite de requisições ({rule}). "
-                f"Tente novamente em {retry_after or 'alguns'} segundo(s)."
-            )
             return msg, 429, headers
 
     return app

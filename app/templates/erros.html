@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% set title = "Erro " ~ (status_code or "") %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center p-4">
+
+                    <h1 class="h4 mb-2">
+                        {% if status_code == 401 %}
+                        Não autenticado
+                        {% elif status_code == 403 %}
+                        Acesso negado
+                        {% elif status_code == 429 %}
+                        Muitas requisições
+                        {% else %}
+                        Ocorreu um erro
+                        {% endif %}
+                    </h1>
+
+                    {% if message %}
+                    <p class="text-muted mb-3">
+                        {{ message }}
+                    </p>
+                    {% endif %}
+
+                    {% if status_code == 429 and retry_after %}
+                    <p class="small text-muted mb-3">
+                        Tente novamente em {{ retry_after }} segundo(s).
+                    </p>
+                    {% endif %}
+
+                    <a href="{{ url_for('home.index') }}" class="btn btn-primary">
+                        Voltar para a página inicial
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
