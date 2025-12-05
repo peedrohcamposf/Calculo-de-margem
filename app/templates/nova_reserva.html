@@ -515,6 +515,43 @@
                             </div>
                         </div>
 
+                        <!-- Contrato de manutenção / Entrega Técnica / PDI / Garantia -->
+                        <div class="row g-3 align-items-end mt-3">
+                            <div class="col-md-4 col-lg-3">
+                                <label class="form-label mb-1 small">{{ form.contrato_manutencao.label }}</label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">R$</span>
+                                    {{ form.contrato_manutencao(class="form-control text-end") }}
+                                </div>
+                                {% for error in form.contrato_manutencao.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-3 col-lg-2">
+                                <label class="form-label mb-1 small">{{ form.entrega_tecnica_pdi_garantia_percent.label
+                                    }}</label>
+                                <div class="input-group input-group-sm">
+                                    {{ form.entrega_tecnica_pdi_garantia_percent(class="form-control text-end") }}
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                {% for error in form.entrega_tecnica_pdi_garantia_percent.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-4 col-lg-3 ms-auto">
+                                <label class="form-label mb-1 small">Entrega Técnica / PDI / Garantia (R$)</label>
+                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                    {% if entrega_tecnica_pdi_garantia_valor_formatado %}
+                                    R$ {{ entrega_tecnica_pdi_garantia_valor_formatado }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="card-footer bg-white border-0 d-flex justify-content-end gap-2 py-2">

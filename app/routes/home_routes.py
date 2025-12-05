@@ -19,6 +19,7 @@ from app.service.nova_reserva_service import (
     calcular_total_horas_opcionais,
     calcular_mao_obra_agrega_desagrega,
     calcular_credito_impostos,
+    calcular_entrega_tecnica_pdi_garantia,
     calcular_cmv,
 )
 from app.extensions import db
@@ -134,6 +135,12 @@ def nova_reserva():
     cmv_valor = None
     cmv_valor_formatado = None
 
+    contrato_manutencao_valor = None
+    contrato_manutencao_valor_formatado = None
+
+    entrega_tecnica_pdi_garantia_valor = None
+    entrega_tecnica_pdi_garantia_valor_formatado = None
+
     # Só valida os dados, não insere nada no BD
     if form.validate_on_submit():
         # Cálculo de impostos de venda (ICMS + PIS/COFINS) * Valor de venda
@@ -143,6 +150,26 @@ def nova_reserva():
             form.pis_cofins_percent.data,
         )
         impostos_venda_formatado = _formatar_brl(impostos_venda)
+
+        # Contrato de manutenção (valor direto informado)
+        if form.contrato_manutencao.data is not None:
+            contrato_manutencao_valor = form.contrato_manutencao.data
+            contrato_manutencao_valor_formatado = _formatar_brl(
+                contrato_manutencao_valor
+            )
+
+        # Entrega técnica / PDI / Garantia (percentual sobre valor de venda)
+        if (
+            form.valor_venda.data is not None
+            and form.entrega_tecnica_pdi_garantia_percent.data is not None
+        ):
+            entrega_tecnica_pdi_garantia_valor = calcular_entrega_tecnica_pdi_garantia(
+                form.valor_venda.data,
+                form.entrega_tecnica_pdi_garantia_percent.data,
+            )
+            entrega_tecnica_pdi_garantia_valor_formatado = _formatar_brl(
+                entrega_tecnica_pdi_garantia_valor
+            )
 
         # Impostos sobre compra
         # base = valor_compra da máquina escolhida no BD
@@ -226,4 +253,8 @@ def nova_reserva():
         valor_maquina_base_formatado=valor_maquina_base_formatado,
         cmv_valor=cmv_valor,
         cmv_valor_formatado=cmv_valor_formatado,
+        contrato_manutencao_valor=contrato_manutencao_valor,
+        contrato_manutencao_valor_formatado=contrato_manutencao_valor_formatado,
+        entrega_tecnica_pdi_garantia_valor=entrega_tecnica_pdi_garantia_valor,
+        entrega_tecnica_pdi_garantia_valor_formatado=entrega_tecnica_pdi_garantia_valor_formatado,
     )

@@ -254,6 +254,35 @@ class NovaReservaForm(FlaskForm):
         ],
     )
 
+    # Contrato de manutenção (R$)
+    contrato_manutencao = DecimalField(
+        "Contrato de Manutenção",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(
+                min=0,
+                message="O valor do contrato não pode ser negativo.",
+            ),
+        ],
+    )
+
+    # Entrega Técnica / PDI / Garantia (%)
+    entrega_tecnica_pdi_garantia_percent = DecimalField(
+        "% Entrega Técnica / PDI / Garantia",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(
+                min=0,
+                max=100,
+                message="Percentual deve estar entre 0% e 100%.",
+            ),
+        ],
+    )
+
     # Validações customizadas
     def validate_filial(self, field: SelectField) -> None:
         empresa = self.empresa.data
