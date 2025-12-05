@@ -272,7 +272,7 @@
 
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <h2 class="h6 mb-0 text-muted text-uppercase small">
-                                Custo da Mercadoria Vendida (CMV)
+                                Análise de Margens
                             </h2>
                         </div>
 
@@ -289,7 +289,27 @@
                             </div>
 
                             <div class="col-md-4 col-lg-3 ms-auto">
-                                <label class="form-label mb-1 small">CMV calculado</label>
+                                <label class="form-label mb-1 small">Margem % RB</label>
+                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                    {% if percentual_margem_rb_valor_formatado %}
+                                    R$ {{ percentual_margem_rb_valor_formatado }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-lg-3 ms-auto">
+                                <label class="form-label mb-1 small">% RB</label>
+                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                    {% if percentual_rb_valor_formatado %}
+                                    R$ {{ percentual_rb_valor_formatado }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-lg-3 ms-auto">
+                                <label class="form-label mb-1 small">Custo da Mercadoria Vendida (CMV)</label>
                                 <div class="form-control form-control-sm text-end bg-light fw-semibold">
                                     {% if cmv_valor_formatado %}
                                     R$ {{ cmv_valor_formatado }}
@@ -573,47 +593,12 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Crédito de Impostos (Frete compra) -->
-                        <hr class="my-4">
-
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h2 class="h6 mb-0 text-muted text-uppercase small">
-                                Crédito de impostos (frete de compra)
-                            </h2>
-                            <small class="text-muted small">
-                                Crédito = frete compra × % crédito
-                            </small>
-                        </div>
-
-                        <div class="row g-3 align-items-end mb-2">
-                            <div class="col-md-4 col-lg-3">
-                                <label class="form-label mb-1 small">{{ form.frete_compra.label }}</label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text">R$</span>
-                                    {{ form.frete_compra(class="form-control text-end") }}
-                                </div>
-                                {% for error in form.frete_compra.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-md-3 col-lg-2">
-                                <label class="form-label mb-1 small">{{ form.credito_impostos_percent.label }}</label>
-                                <div class="input-group input-group-sm">
-                                    {{ form.credito_impostos_percent(class="form-control text-end") }}
-                                    <span class="input-group-text">%</span>
-                                </div>
-                                {% for error in form.credito_impostos_percent.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-12 col-md-4 col-lg-3 ms-auto">
-                                <label class="form-label mb-1 small">Crédito de impostos (R$)</label>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4 col-lg-3 ms-auto">
+                                <label class="form-label mb-1 small">Margem % RB</label>
                                 <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                    {% if credito_impostos_valor_formatado %}
-                                    R$ {{ credito_impostos_valor_formatado }}
+                                    {% if percentual_margem_rb_valor_formatado %}
+                                    R$ {{ percentual_margem_rb_valor_formatado }}
                                     {% else %}
                                     -
                                     {% endif %}
@@ -629,7 +614,7 @@
                                 Crédito de impostos (frete de venda)
                             </h2>
                             <small class="text-muted small">
-                                Crédito = frete venda × % crédito
+                                Crédito = frete venda x % crédito
                             </small>
                         </div>
 
@@ -828,6 +813,40 @@
                                         -
                                         {% endif %}
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lucro Bruto -->
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h2 class="h6 mb-0 text-muted text-uppercase small">
+                                Margem de Contribuição e % RB
+                            </h2>
+                        </div>
+
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4 col-lg-3 ms-auto">
+                                <label class="form-label mb-1 small">Margem de Contribuição</label>
+                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                    {% if margem_contribuicao_valor_formatado %}
+                                    R$ {{ margem_contribuicao_valor_formatado }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4 col-lg-3 ms-auto">
+                                <label class="form-label mb-1 small">% RB</label>
+                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                    {% if percentual_rb_valor_formatado %}
+                                    R$ {{ percentual_rb_valor_formatado }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

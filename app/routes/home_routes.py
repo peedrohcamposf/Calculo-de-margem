@@ -28,6 +28,9 @@ from app.service.nova_reserva_service import (
     calcular_encargos_comissao,
     calcular_total_comissao_vendedor,
     calcular_percentual_comissao_sobre_venda,
+    calcular_margem_contribuicao,
+    calcular_percentual_rb,
+    calcular_percentual_margem_rb,
 )
 from app.extensions import db
 
@@ -171,6 +174,15 @@ def nova_reserva():
 
     comissao_total_vendedor_percent = None
     comissao_total_vendedor_percent_formatado = None
+
+    margem_contribuicao_valor = None
+    margem_contribuicao_valor_formatado = None
+
+    percentual_rb_valor = None
+    percentual_rb_valor_formatado = None
+
+    percentual_margem_rb_valor = None
+    percentual_margem_rb_valor_formatado = None
 
     # Só valida os dados, não insere nada no BD
     if form.validate_on_submit():
@@ -357,6 +369,41 @@ def nova_reserva():
                     comissao_total_vendedor_percent
                 )
 
+        # Margem de contribuição, %RB e Margem %RB
+        if lucro_bruto_valor is not None and form.valor_venda.data is not None:
+
+            # Margem de contribuição
+            margem_contribuicao_valor = calcular_margem_contribuicao(
+                lucro_bruto=lucro_bruto_valor,
+                frete_venda=form.frete_venda.data,
+                credito_impostos_venda=credito_impostos_venda_valor,
+                custo_financeiro=form.custo_financeiro.data,
+                carta_fianca=carta_fianca_valor,
+                cortesia=form.cortesia.data,
+                comissao_total_vendedor=comissao_total_vendedor_valor,
+            )
+            margem_contribuicao_valor_formatado = _formatar_brl(
+                margem_contribuicao_valor
+            )
+
+            # %RB
+            percentual_rb_valor = calcular_percentual_rb(
+                margem_contribuicao_valor,
+                form.valor_venda.data,
+            )
+            if percentual_rb_valor is not None:
+                percentual_rb_valor_formatado = _formatar_brl(percentual_rb_valor)
+
+            # Margem %RB
+            percentual_margem_rb_valor = calcular_percentual_margem_rb(
+                lucro_bruto_valor,
+                form.valor_venda.data,
+            )
+            if percentual_margem_rb_valor is not None:
+                percentual_margem_rb_valor_formatado = _formatar_brl(
+                    percentual_margem_rb_valor
+                )
+
         flash(
             "Dados da reserva validados com sucesso.",
             "success",
@@ -400,4 +447,10 @@ def nova_reserva():
         comissao_total_vendedor_valor_formatado=comissao_total_vendedor_valor_formatado,
         comissao_total_vendedor_percent=comissao_total_vendedor_percent,
         comissao_total_vendedor_percent_formatado=comissao_total_vendedor_percent_formatado,
+        margem_contribuicao_valor=margem_contribuicao_valor,
+        margem_contribuicao_valor_formatado=margem_contribuicao_valor_formatado,
+        percentual_rb_valor=percentual_rb_valor,
+        percentual_rb_valor_formatado=percentual_rb_valor_formatado,
+        percentual_margem_rb_valor=percentual_margem_rb_valor,
+        percentual_margem_rb_valor_formatado=percentual_margem_rb_valor_formatado,
     )

@@ -268,3 +268,73 @@ def calcular_percentual_comissao_sobre_venda(
     fracao = _to_decimal(total_comissao) / base_venda
     percentual = fracao * Decimal("100")
     return percentual.quantize(Decimal("0.01"))
+
+
+def calcular_margem_contribuicao(
+    lucro_bruto,
+    frete_venda=None,
+    credito_impostos_venda=None,
+    custo_financeiro=None,
+    carta_fianca=None,
+    cortesia=None,
+    comissao_total_vendedor=None,
+) -> Optional[Decimal]:
+    # Margem de Contribuição (R$) = Lucro Bruto - Frete venda + Crédito de impostos (venda) - Custo financeiro - Carta fiança bancária - Cortesia - Comissão total do vendedor (R$)
+    if lucro_bruto is None:
+        return None
+
+    total = _to_decimal(lucro_bruto)
+
+    if frete_venda is not None:
+        total -= _to_decimal(frete_venda)
+
+    if credito_impostos_venda is not None:
+        total += _to_decimal(credito_impostos_venda)
+
+    if custo_financeiro is not None:
+        total -= _to_decimal(custo_financeiro)
+
+    if carta_fianca is not None:
+        total -= _to_decimal(carta_fianca)
+
+    if cortesia is not None:
+        total -= _to_decimal(cortesia)
+
+    if comissao_total_vendedor is not None:
+        total -= _to_decimal(comissao_total_vendedor)
+
+    return total.quantize(Decimal("0.01"))
+
+
+def calcular_percentual_rb(
+    margem_contribuicao,
+    valor_venda,
+) -> Optional[Decimal]:
+    # %RB = (Margem de Contribuição / Valor de venda) * 100
+    if margem_contribuicao is None or valor_venda is None:
+        return None
+
+    base_venda = _to_decimal(valor_venda)
+    if base_venda == 0:
+        return None
+
+    fracao = _to_decimal(margem_contribuicao) / base_venda
+    percentual = fracao * Decimal("100")
+    return percentual.quantize(Decimal("0.01"))
+
+
+def calcular_percentual_margem_rb(
+    lucro_bruto,
+    valor_venda,
+) -> Optional[Decimal]:
+    # Margem %RB = (Lucro Bruto / Valor de venda) * 100
+    if lucro_bruto is None or valor_venda is None:
+        return None
+
+    base_venda = _to_decimal(valor_venda)
+    if base_venda == 0:
+        return None
+
+    fracao = _to_decimal(lucro_bruto) / base_venda
+    percentual = fracao * Decimal("100")
+    return percentual.quantize(Decimal("0.01"))
