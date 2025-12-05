@@ -351,6 +351,49 @@ class NovaReservaForm(FlaskForm):
         ],
     )
 
+    # Comissão do vendedor
+    comissao_bruta_percent = DecimalField(
+        "% Comissão bruta",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(
+                min=0,
+                max=100,
+                message="Percentual deve estar entre 0% e 100%.",
+            ),
+        ],
+    )
+
+    dsr_percent = DecimalField(
+        "% DSR sobre comissão",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(
+                min=0,
+                max=100,
+                message="Percentual deve estar entre 0% e 100%.",
+            ),
+        ],
+    )
+
+    encargos_comissao_percent = DecimalField(
+        "% Encargos sobre comissão + DSR",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(
+                min=0,
+                max=100,
+                message="Percentual deve estar entre 0% e 100%.",
+            ),
+        ],
+    )
+
     # Validações customizadas
     def validate_filial(self, field: SelectField) -> None:
         empresa = self.empresa.data

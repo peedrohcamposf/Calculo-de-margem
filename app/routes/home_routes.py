@@ -23,6 +23,9 @@ from app.service.nova_reserva_service import (
     calcular_cmv,
     calcular_lucro_bruto,
     calcular_carta_fianca,
+    calcular_comissao_bruta,
+    calcular_dsr,
+    calcular_encargos_comissao,
 )
 from app.extensions import db
 
@@ -152,6 +155,15 @@ def nova_reserva():
     carta_fianca_valor = None
     carta_fianca_valor_formatado = None
 
+    comissao_bruta_valor = None
+    comissao_bruta_valor_formatado = None
+
+    dsr_valor = None
+    dsr_valor_formatado = None
+
+    encargos_comissao_valor = None
+    encargos_comissao_valor_formatado = None
+
     # Só valida os dados, não insere nada no BD
     if form.validate_on_submit():
         # Cálculo de impostos de venda (ICMS + PIS/COFINS) * Valor de venda
@@ -280,6 +292,38 @@ def nova_reserva():
             )
             lucro_bruto_valor_formatado = _formatar_brl(lucro_bruto_valor)
 
+        # Comissão Bruta = % * valor de venda
+        if (
+            form.valor_venda.data is not None
+            and form.comissao_bruta_percent.data is not None
+        ):
+            comissao_bruta_valor = calcular_comissao_bruta(
+                form.valor_venda.data,
+                form.comissao_bruta_percent.data,
+            )
+            comissao_bruta_valor_formatado = _formatar_brl(comissao_bruta_valor)
+
+        # DSR = % * comissão bruta
+        if comissao_bruta_valor is not None and form.dsr_percent.data is not None:
+            dsr_valor = calcular_dsr(
+                comissao_bruta_valor,
+                form.dsr_percent.data,
+            )
+            dsr_valor_formatado = _formatar_brl(dsr_valor)
+
+        # Encargos comissão = % * (comissão bruta + DSR)
+        if (
+            comissao_bruta_valor is not None
+            and dsr_valor is not None
+            and form.encargos_comissao_percent.data is not None
+        ):
+            encargos_comissao_valor = calcular_encargos_comissao(
+                comissao_bruta_valor,
+                dsr_valor,
+                form.encargos_comissao_percent.data,
+            )
+            encargos_comissao_valor_formatado = _formatar_brl(encargos_comissao_valor)
+
         flash(
             "Dados da reserva validados com sucesso (ainda sem gravar no banco).",
             "success",
@@ -313,4 +357,10 @@ def nova_reserva():
         lucro_bruto_valor_formatado=lucro_bruto_valor_formatado,
         carta_fianca_valor=carta_fianca_valor,
         carta_fianca_valor_formatado=carta_fianca_valor_formatado,
+        comissao_bruta_valor=comissao_bruta_valor,
+        comissao_bruta_valor_formatado=comissao_bruta_valor_formatado,
+        dsr_valor=dsr_valor,
+        dsr_valor_formatado=dsr_valor_formatado,
+        encargos_comissao_valor=encargos_comissao_valor,
+        encargos_comissao_valor_formatado=encargos_comissao_valor_formatado,
     )

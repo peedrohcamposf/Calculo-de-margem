@@ -90,27 +90,12 @@ def calcular_credito_impostos(
     frete_compra,
     credito_percent,
 ) -> Optional[Decimal]:
-    # crédito = frete_compra * (percentual / 100)
+    # crédito = frete * (percentual / 100)
     if frete_compra is None:
         return None
 
     base = _to_decimal(frete_compra)
     percentual = _to_decimal(credito_percent) / Decimal("100")
-
-    total = base * percentual
-    return total.quantize(Decimal("0.01"))
-
-
-def calcular_entrega_tecnica_pdi_garantia(
-    valor_venda,
-    percent,
-) -> Optional[Decimal]:
-    # Entrega Técnica / PDI / Garantia (R$) = (% / 100) * Valor de venda
-    if valor_venda is None:
-        return None
-
-    base = _to_decimal(valor_venda)
-    percentual = _to_decimal(percent) / Decimal("100")
 
     total = base * percentual
     return total.quantize(Decimal("0.01"))
@@ -203,4 +188,50 @@ def calcular_lucro_bruto(
     if entrega_tecnica_valor is not None:
         total -= _to_decimal(entrega_tecnica_valor)
 
+    return total.quantize(Decimal("0.01"))
+
+
+def calcular_comissao_bruta(
+    valor_venda,
+    comissao_percent,
+) -> Optional[Decimal]:
+    # Comissão Bruta (R$) = (% / 100) * Valor de venda
+    if valor_venda is None:
+        return None
+
+    base = _to_decimal(valor_venda)
+    percentual = _to_decimal(comissao_percent) / Decimal("100")
+
+    total = base * percentual
+    return total.quantize(Decimal("0.01"))
+
+
+def calcular_dsr(
+    comissao_bruta,
+    dsr_percent,
+) -> Optional[Decimal]:
+    # DSR (R$) = (% / 100) * Comissão Bruta
+    if comissao_bruta is None:
+        return None
+
+    base = _to_decimal(comissao_bruta)
+    percentual = _to_decimal(dsr_percent) / Decimal("100")
+
+    total = base * percentual
+    return total.quantize(Decimal("0.01"))
+
+
+def calcular_encargos_comissao(
+    comissao_bruta,
+    dsr,
+    encargos_percent,
+) -> Optional[Decimal]:
+    # Encargos comissão (R$) = (% / 100) * (Comissão Bruta + DSR)
+    if comissao_bruta is None or dsr is None:
+        return None
+
+    soma_base = _to_decimal(comissao_bruta) + _to_decimal(dsr)
+    percentual = _to_decimal(encargos_percent) / Decimal("100")
+
+    total = soma_base * percentual
     return total.quantize(Decimal("0.01"))
