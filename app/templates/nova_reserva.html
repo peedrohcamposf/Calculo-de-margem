@@ -314,6 +314,174 @@
                             </div>
                         </div>
 
+                        <!-- Opcionais / Agrega / Desagrega -->
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h2 class="h6 mb-0 text-muted text-uppercase small">
+                                Opcionais / Agrega / Desagrega
+                            </h2>
+                            <div class="small text-muted">
+                                Horas totais:
+                                <span class="fw-semibold">
+                                    {% if total_horas_opcionais_formatado %}
+                                    {{ total_horas_opcionais_formatado }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive mb-2">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 60%">Descrição</th>
+                                        <th style="width: 30%">Horas</th>
+                                        <th style="width: 10%" class="text-center">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="opcionais-rows">
+                                    {% set itens = opcionais_itens or [] %}
+                                    {% if itens %}
+                                    {% for item in itens %}
+                                    <tr class="opcional-row">
+                                        <td>
+                                            <input type="text" name="opcional_nome" class="form-control form-control-sm"
+                                                maxlength="150" value="{{ item.nome }}"
+                                                placeholder="Ex.: AGREGA KIT INVERSÃO">
+                                        </td>
+                                        <td>
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" name="opcional_horas" class="form-control text-end"
+                                                    value="{{ item.horas }}" placeholder="0,00">
+                                                <span class="input-group-text">h</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-outline-danger btn-sm"
+                                                onclick="removerOpcionalRow(this)" title="Remover linha">
+                                                &times;
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    {% else %}
+                                    <tr class="opcional-row">
+                                        <td>
+                                            <input type="text" name="opcional_nome" class="form-control form-control-sm"
+                                                maxlength="150" placeholder="Ex.: AGREGA KIT INVERSÃO">
+                                        </td>
+                                        <td>
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" name="opcional_horas" class="form-control text-end"
+                                                    placeholder="0,00">
+                                                <span class="input-group-text">h</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <button type="button" class="btn btn-outline-danger btn-sm"
+                                                onclick="removerOpcionalRow(this)" title="Remover linha">
+                                                &times;
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3 small">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-add-opcional">
+                                + Adicionar linha
+                            </button>
+                        </div>
+
+                        <!-- Mão de Obra Agrega/Desagrega -->
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h2 class="h6 mb-0 text-muted text-uppercase small">
+                                Mão de obra agrega / desagrega
+                            </h2>
+                            <small class="text-muted small">
+                                Valor = horas × R$ 200,00
+                            </small>
+                        </div>
+
+                        <div class="row g-3 align-items-end mb-2">
+                            <div class="col-md-4 col-lg-3">
+                                <label class="form-label mb-1 small">{{ form.mao_obra_agrega_desagrega_horas.label
+                                    }}</label>
+                                <div class="input-group input-group-sm">
+                                    {{ form.mao_obra_agrega_desagrega_horas(class="form-control text-end") }}
+                                    <span class="input-group-text">h</span>
+                                </div>
+                                {% for error in form.mao_obra_agrega_desagrega_horas.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-12 col-md-4 col-lg-3 ms-auto">
+                                <label class="form-label mb-1 small">Mão de obra agrega/desagrega (R$)</label>
+                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                    {% if mao_obra_agrega_desagrega_valor_formatado %}
+                                    R$ {{ mao_obra_agrega_desagrega_valor_formatado }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Crédito de Impostos (Frete compra) -->
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h2 class="h6 mb-0 text-muted text-uppercase small">
+                                Crédito de impostos (frete de compra)
+                            </h2>
+                            <small class="text-muted small">
+                                Crédito = frete compra × % crédito
+                            </small>
+                        </div>
+
+                        <div class="row g-3 align-items-end mb-2">
+                            <div class="col-md-4 col-lg-3">
+                                <label class="form-label mb-1 small">{{ form.frete_compra.label }}</label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">R$</span>
+                                    {{ form.frete_compra(class="form-control text-end") }}
+                                </div>
+                                {% for error in form.frete_compra.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-md-3 col-lg-2">
+                                <label class="form-label mb-1 small">{{ form.credito_impostos_percent.label }}</label>
+                                <div class="input-group input-group-sm">
+                                    {{ form.credito_impostos_percent(class="form-control text-end") }}
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                {% for error in form.credito_impostos_percent.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="col-12 col-md-4 col-lg-3 ms-auto">
+                                <label class="form-label mb-1 small">Crédito de impostos (R$)</label>
+                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                    {% if credito_impostos_valor_formatado %}
+                                    R$ {{ credito_impostos_valor_formatado }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="card-footer bg-white border-0 d-flex justify-content-end gap-2 py-2">
@@ -425,6 +593,77 @@
             }
             atualizarTemaEmpresa();
         }
+    })();
+</script>
+
+<script>
+    (function () {
+        const MAX_LINHAS_OPCIONAIS = 100;
+        const tbody = document.getElementById("opcionais-rows");
+        const btnAdd = document.getElementById("btn-add-opcional");
+
+        if (!tbody || !btnAdd) {
+            return;
+        }
+
+        function contarLinhas() {
+            return tbody.querySelectorAll("tr.opcional-row").length;
+        }
+
+        function atualizarEstadoBotao() {
+            btnAdd.disabled = contarLinhas() >= MAX_LINHAS_OPCIONAIS;
+        }
+
+        function criarLinhaVazia() {
+            const tr = document.createElement("tr");
+            tr.className = "opcional-row";
+            tr.innerHTML = `
+                <td>
+                    <input type="text"
+                           name="opcional_nome"
+                           class="form-control form-control-sm"
+                           maxlength="150"
+                           placeholder="Ex.: AGREGA KIT INVERSÃO">
+                </td>
+                <td>
+                    <div class="input-group input-group-sm">
+                        <input type="text"
+                               name="opcional_horas"
+                               class="form-control text-end"
+                               placeholder="0,00">
+                        <span class="input-group-text">h</span>
+                    </div>
+                </td>
+                <td class="text-center">
+                    <button type="button"
+                            class="btn btn-outline-danger btn-sm"
+                            onclick="removerOpcionalRow(this)"
+                            title="Remover linha">
+                        &times;
+                    </button>
+                </td>
+            `;
+            return tr;
+        }
+
+        btnAdd.addEventListener("click", function () {
+            if (contarLinhas() >= MAX_LINHAS_OPCIONAIS) {
+                return;
+            }
+            tbody.appendChild(criarLinhaVazia());
+            atualizarEstadoBotao();
+        });
+
+        window.removerOpcionalRow = function (btn) {
+            const tr = btn.closest("tr.opcional-row");
+            if (!tr) {
+                return;
+            }
+            tbody.removeChild(tr);
+            atualizarEstadoBotao();
+        };
+
+        atualizarEstadoBotao();
     })();
 </script>
 

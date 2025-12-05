@@ -215,6 +215,45 @@ class NovaReservaForm(FlaskForm):
         ],
     )
 
+    # Mão de Obra Agrega/Desagrega
+    mao_obra_agrega_desagrega_horas = DecimalField(
+        "Mão de Obra Agrega/Desagrega (horas)",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(
+                min=0,
+                message="As horas de mão de obra não podem ser negativas.",
+            ),
+        ],
+    )
+
+    # Crédito de Impostos (Frete de compra)
+    frete_compra = DecimalField(
+        "Frete compra (até Brasif)",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(min=0, message="O frete não pode ser negativo."),
+        ],
+    )
+
+    credito_impostos_percent = DecimalField(
+        "% Crédito impostos",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(
+                min=0,
+                max=100,
+                message="Percentual de crédito deve estar entre 0% e 100%.",
+            ),
+        ],
+    )
+
     # Validações customizadas
     def validate_filial(self, field: SelectField) -> None:
         empresa = self.empresa.data

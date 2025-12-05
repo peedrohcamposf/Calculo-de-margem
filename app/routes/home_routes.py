@@ -16,6 +16,9 @@ from app.forms.home_forms import NovaReservaForm, EMPRESA_FILIAIS
 from app.service.nova_reserva_service import (
     calcular_impostos_venda,
     calcular_impostos_compra,
+    calcular_total_horas_opcionais,
+    calcular_mao_obra_agrega_desagrega,
+    calcular_credito_impostos,
 )
 from app.extensions import db
 
@@ -74,11 +77,55 @@ def nova_reserva():
         (m.id_maquina, f"{m.codigo} - {m.modelo}") for m in maquinas
     ]
 
+    # Opcionais / Agrega / Desagrega
+    opcionais_itens: list[dict[str, str]] = []
+    total_horas_opcionais: Decimal | None = None
+    total_horas_opcionais_formatado: str | None = None
+
+    if request.method == "POST":
+        nomes = request.form.getlist("opcional_nome")
+        horas = request.form.getlist("opcional_horas")
+
+        # Limita de 100 linhas
+        max_len = min(len(nomes), len(horas), 100)
+        horas_para_soma: list[str] = []
+
+        for idx in range(max_len):
+            nome_raw = (nomes[idx] or "").strip()
+            horas_raw = (horas[idx] or "").strip()
+
+            # Ignora linha totalmente em branco
+            if not nome_raw and not horas_raw:
+                continue
+
+            opcionais_itens.append(
+                {
+                    "nome": nome_raw,
+                    "horas": horas_raw,
+                }
+            )
+
+            if horas_raw:
+                horas_para_soma.append(horas_raw)
+
+        if horas_para_soma:
+            total_horas_opcionais = calcular_total_horas_opcionais(horas_para_soma)
+            total_horas_opcionais_formatado = _formatar_brl(total_horas_opcionais)
+        else:
+            total_horas_opcionais = None
+            total_horas_opcionais_formatado = None
+
     impostos_venda = None
     impostos_venda_formatado = None
 
     impostos_compra = None
     impostos_compra_formatado = None
+
+    mao_obra_agrega_desagrega_valor = None
+    mao_obra_agrega_desagrega_valor_formatado = None
+
+    credito_impostos_valor = None
+    credito_impostos_valor_formatado = None
 
     # Só valida os dados, não insere nada no BD
     if form.validate_on_submit():
@@ -111,6 +158,26 @@ def nova_reserva():
         )
         impostos_compra_formatado = _formatar_brl(impostos_compra)
 
+        # Mão de obra agrega/desagrega (horas x 200)
+        if form.mao_obra_agrega_desagrega_horas.data is not None:
+            mao_obra_agrega_desagrega_valor = calcular_mao_obra_agrega_desagrega(
+                form.mao_obra_agrega_desagrega_horas.data
+            )
+            mao_obra_agrega_desagrega_valor_formatado = _formatar_brl(
+                mao_obra_agrega_desagrega_valor
+            )
+
+        # Crédito de impostos (frete * % crédito)
+        if (
+            form.frete_compra.data is not None
+            and form.credito_impostos_percent.data is not None
+        ):
+            credito_impostos_valor = calcular_credito_impostos(
+                form.frete_compra.data,
+                form.credito_impostos_percent.data,
+            )
+            credito_impostos_valor_formatado = _formatar_brl(credito_impostos_valor)
+
         flash(
             "Dados da reserva validados com sucesso (ainda sem gravar no banco).",
             "success",
@@ -123,4 +190,11 @@ def nova_reserva():
         impostos_venda_formatado=impostos_venda_formatado,
         impostos_compra=impostos_compra,
         impostos_compra_formatado=impostos_compra_formatado,
+        opcionais_itens=opcionais_itens,
+        total_horas_opcionais=total_horas_opcionais,
+        total_horas_opcionais_formatado=total_horas_opcionais_formatado,
+        mao_obra_agrega_desagrega_valor=mao_obra_agrega_desagrega_valor,
+        mao_obra_agrega_desagrega_valor_formatado=mao_obra_agrega_desagrega_valor_formatado,
+        credito_impostos_valor=credito_impostos_valor,
+        credito_impostos_valor_formatado=credito_impostos_valor_formatado,
     )
