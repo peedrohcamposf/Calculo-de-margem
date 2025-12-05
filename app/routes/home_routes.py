@@ -9,7 +9,7 @@ from app.forms.home_forms import NovaReservaForm
 from app.repository.maquina_repository import MaquinaRepository
 from app.service.nova_reserva_service import NovaReservaService
 from app.extensions import db
-from app.domain import get_filiais_da_empresa
+from app.domain import get_filiais_da_empresa, EMPRESA_FILIAIS
 
 home_bp = Blueprint("home", __name__)
 
@@ -76,5 +76,6 @@ def nova_reserva():
         opcionais_itens=opcionais_itens,
         total_horas_opcionais=total_horas_opcionais,
         total_horas_opcionais_formatado=total_horas_opcionais_formatado,
+        empresa_filiais=EMPRESA_FILIAIS,
         **contexto_calculos,
     )
