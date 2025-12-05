@@ -130,6 +130,9 @@ def nova_reserva():
     credito_impostos_valor = None
     credito_impostos_valor_formatado = None
 
+    credito_impostos_venda_valor = None
+    credito_impostos_venda_valor_formatado = None
+
     valor_maquina_base = None
     valor_maquina_base_formatado = None
 
@@ -211,7 +214,7 @@ def nova_reserva():
                 mao_obra_agrega_desagrega_valor
             )
 
-        # Crédito de impostos (frete * % crédito)
+        # Crédito de impostos (frete compra * % crédito)
         if (
             form.frete_compra.data is not None
             and form.credito_impostos_percent.data is not None
@@ -221,6 +224,19 @@ def nova_reserva():
                 form.credito_impostos_percent.data,
             )
             credito_impostos_valor_formatado = _formatar_brl(credito_impostos_valor)
+
+        # Crédito de impostos (frete venda * % crédito)
+        if (
+            form.frete_venda.data is not None
+            and form.credito_impostos_venda_percent.data is not None
+        ):
+            credito_impostos_venda_valor = calcular_credito_impostos(
+                form.frete_venda.data,
+                form.credito_impostos_venda_percent.data,
+            )
+            credito_impostos_venda_valor_formatado = _formatar_brl(
+                credito_impostos_venda_valor
+            )
 
         # CMV
         if valor_maquina_base is not None:
@@ -268,6 +284,8 @@ def nova_reserva():
         mao_obra_agrega_desagrega_valor_formatado=mao_obra_agrega_desagrega_valor_formatado,
         credito_impostos_valor=credito_impostos_valor,
         credito_impostos_valor_formatado=credito_impostos_valor_formatado,
+        credito_impostos_venda_valor=credito_impostos_venda_valor,
+        credito_impostos_venda_valor_formatado=credito_impostos_venda_valor_formatado,
         valor_maquina_base=valor_maquina_base,
         valor_maquina_base_formatado=valor_maquina_base_formatado,
         cmv_valor=cmv_valor,

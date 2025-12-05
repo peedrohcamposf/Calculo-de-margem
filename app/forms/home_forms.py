@@ -254,6 +254,31 @@ class NovaReservaForm(FlaskForm):
         ],
     )
 
+    # Frete Venda (até cliente)
+    frete_venda = DecimalField(
+        "Frete venda (de Brasif até cliente)",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(min=0, message="O frete não pode ser negativo."),
+        ],
+    )
+
+    credito_impostos_venda_percent = DecimalField(
+        "% Crédito impostos (venda)",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(
+                min=0,
+                max=100,
+                message="Percentual de crédito deve estar entre 0% e 100%.",
+            ),
+        ],
+    )
+
     # Contrato de manutenção (R$)
     contrato_manutencao = DecimalField(
         "Contrato de Manutenção",
