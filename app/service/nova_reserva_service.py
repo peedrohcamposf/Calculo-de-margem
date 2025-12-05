@@ -146,3 +146,31 @@ def calcular_cmv(
         total += _to_decimal(mao_obra_valor)
 
     return total.quantize(Decimal("0.01"))
+
+
+def calcular_lucro_bruto(
+    valor_venda,
+    impostos_venda=None,
+    cmv=None,
+    contrato_manutencao=None,
+    entrega_tecnica_valor=None,
+) -> Optional[Decimal]:
+    # Lucro Bruto = Valor de Venda - Impostos de venda - CMV - Contrato de manutenção - Entrega técnica / PDI / Garantia (R$)
+    if valor_venda is None:
+        return None
+
+    total = _to_decimal(valor_venda)
+
+    if impostos_venda is not None:
+        total -= _to_decimal(impostos_venda)
+
+    if cmv is not None:
+        total -= _to_decimal(cmv)
+
+    if contrato_manutencao is not None:
+        total -= _to_decimal(contrato_manutencao)
+
+    if entrega_tecnica_valor is not None:
+        total -= _to_decimal(entrega_tecnica_valor)
+
+    return total.quantize(Decimal("0.01"))

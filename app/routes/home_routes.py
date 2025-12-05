@@ -21,6 +21,7 @@ from app.service.nova_reserva_service import (
     calcular_credito_impostos,
     calcular_entrega_tecnica_pdi_garantia,
     calcular_cmv,
+    calcular_lucro_bruto,
 )
 from app.extensions import db
 
@@ -141,6 +142,9 @@ def nova_reserva():
     entrega_tecnica_pdi_garantia_valor = None
     entrega_tecnica_pdi_garantia_valor_formatado = None
 
+    lucro_bruto_valor = None
+    lucro_bruto_valor_formatado = None
+
     # Só valida os dados, não insere nada no BD
     if form.validate_on_submit():
         # Cálculo de impostos de venda (ICMS + PIS/COFINS) * Valor de venda
@@ -230,6 +234,21 @@ def nova_reserva():
             )
             cmv_valor_formatado = _formatar_brl(cmv_valor)
 
+        # Lucro Bruto
+        if (
+            form.valor_venda.data is not None
+            and impostos_venda is not None
+            and cmv_valor is not None
+        ):
+            lucro_bruto_valor = calcular_lucro_bruto(
+                valor_venda=form.valor_venda.data,
+                impostos_venda=impostos_venda,
+                cmv=cmv_valor,
+                contrato_manutencao=contrato_manutencao_valor,
+                entrega_tecnica_valor=entrega_tecnica_pdi_garantia_valor,
+            )
+            lucro_bruto_valor_formatado = _formatar_brl(lucro_bruto_valor)
+
         flash(
             "Dados da reserva validados com sucesso (ainda sem gravar no banco).",
             "success",
@@ -257,4 +276,6 @@ def nova_reserva():
         contrato_manutencao_valor_formatado=contrato_manutencao_valor_formatado,
         entrega_tecnica_pdi_garantia_valor=entrega_tecnica_pdi_garantia_valor,
         entrega_tecnica_pdi_garantia_valor_formatado=entrega_tecnica_pdi_garantia_valor_formatado,
+        lucro_bruto_valor=lucro_bruto_valor,
+        lucro_bruto_valor_formatado=lucro_bruto_valor_formatado,
     )

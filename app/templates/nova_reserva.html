@@ -552,6 +552,28 @@
                             </div>
                         </div>
 
+                        <!-- Lucro Bruto -->
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h2 class="h6 mb-0 text-muted text-uppercase small">
+                                Lucro Bruto
+                            </h2>
+                        </div>
+
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4 col-lg-3 ms-auto">
+                                <label class="form-label mb-1 small">Lucro Bruto</label>
+                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                    {% if lucro_bruto_valor_formatado %}
+                                    R$ {{ lucro_bruto_valor_formatado }}
+                                    {% else %}
+                                    -
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="card-footer bg-white border-0 d-flex justify-content-end gap-2 py-2">
