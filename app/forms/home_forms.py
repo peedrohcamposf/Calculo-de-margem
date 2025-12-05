@@ -17,28 +17,7 @@ from wtforms.validators import (
     ValidationError,
 )
 
-# Empresa x filiais permitidas
-EMPRESA_FILIAIS = {
-    "brasif": [
-        "Belo Horizonte",
-        "Brasilia",
-        "Cuiabá",
-        "Curitiba",
-        "Goiânia",
-        "Jundiaí",
-        "Palmas",
-        "Ribeirão Preto",
-        "Rio de Janeiro",
-        "Serra",
-    ],
-    "brasifagro": [
-        "Luís Eduardo Magalhães",
-        "Roda Velha",
-        "Correntina",
-        "Formosa do Rio Preto",
-        "Bom Jesus",
-    ],
-}
+from app.domain import EMPRESA_CHOICES, get_filiais_da_empresa
 
 
 class NovaReservaForm(FlaskForm):
@@ -54,11 +33,7 @@ class NovaReservaForm(FlaskForm):
     # Controla quais filiais são válidas
     empresa = SelectField(
         "Empresa",
-        choices=[
-            ("", "Selecione..."),
-            ("brasif", "Brasif"),
-            ("brasifagro", "Brasif Agro"),
-        ],
+        choices=EMPRESA_CHOICES,
         validators=[DataRequired(message="Selecione a empresa.")],
     )
 
@@ -397,7 +372,7 @@ class NovaReservaForm(FlaskForm):
     # Validações customizadas
     def validate_filial(self, field: SelectField) -> None:
         empresa = self.empresa.data
-        allowed = EMPRESA_FILIAIS.get(empresa, [])
+        allowed = get_filiais_da_empresa(empresa)
         if empresa and allowed and field.data not in allowed:
             raise ValidationError("Filial inválida para a empresa selecionada.")
 

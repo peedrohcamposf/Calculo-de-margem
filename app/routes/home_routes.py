@@ -5,10 +5,11 @@ from decimal import Decimal
 from flask import Blueprint, render_template, request, flash
 from flask_login import login_required
 
-from app.forms.home_forms import NovaReservaForm, EMPRESA_FILIAIS
+from app.forms.home_forms import NovaReservaForm
 from app.repository.maquina_repository import MaquinaRepository
 from app.service.nova_reserva_service import NovaReservaService
 from app.extensions import db
+from app.domain import get_filiais_da_empresa
 
 home_bp = Blueprint("home", __name__)
 
@@ -21,9 +22,8 @@ def nova_reserva():
     # Empresa x Filial (choices do Select)
     empresa_selecionada = form.empresa.data or ""
     if empresa_selecionada:
-        form.filial.choices = [
-            (nome, nome) for nome in EMPRESA_FILIAIS.get(empresa_selecionada, [])
-        ]
+        filiais = get_filiais_da_empresa(empresa_selecionada)
+        form.filial.choices = [(nome, nome) for nome in filiais]
     else:
         form.filial.choices = []
 
