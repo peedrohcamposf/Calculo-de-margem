@@ -163,7 +163,7 @@ class NovaReservaForm(FlaskForm):
     )
 
     icms_percent = DecimalField(
-        "% ICMS",
+        "% ICMS (venda)",
         places=2,
         default=0,
         validators=[
@@ -173,7 +173,7 @@ class NovaReservaForm(FlaskForm):
     )
 
     pis_cofins_percent = DecimalField(
-        "% PIS/COFINS",
+        "% PIS/COFINS (venda)",
         places=2,
         default=0,
         validators=[
@@ -182,6 +182,35 @@ class NovaReservaForm(FlaskForm):
                 min=0,
                 max=100,
                 message="PIS/COFINS deve estar entre 0% e 100%.",
+            ),
+        ],
+    )
+
+    # Análise de Margens / Impostos Compra
+    icms_pis_compra_percent = DecimalField(
+        "% ICMS + PIS/COFINS (compra)",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(
+                min=0,
+                max=100,
+                message="Percentual deve estar entre 0% e 100%.",
+            ),
+        ],
+    )
+
+    pis_cofins_compra_percent = DecimalField(
+        "% PIS/COFINS (compra)",
+        places=2,
+        default=0,
+        validators=[
+            Optional(),
+            NumberRange(
+                min=0,
+                max=100,
+                message="Percentual deve estar entre 0% e 100%.",
             ),
         ],
     )

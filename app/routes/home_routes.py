@@ -13,16 +13,19 @@ from sqlalchemy import or_
 
 from app.domain import MaquinaModel
 from app.forms.home_forms import NovaReservaForm, EMPRESA_FILIAIS
-from app.service.nova_reserva_service import calcular_impostos_venda
+from app.service.nova_reserva_service import (
+    calcular_impostos_venda,
+    calcular_impostos_compra,
+)
 from app.extensions import db
 
 home_bp = Blueprint("home", __name__)
+
 
 def _formatar_brl(valor: Decimal | None) -> str | None:
     if valor is None:
         return None
     s = f"{valor:,.2f}"
-    # Converte para padrão brasileiro: 1.234.567,89
     return s.replace(",", "X").replace(".", ",").replace("X", ".")
 
 
@@ -74,6 +77,9 @@ def nova_reserva():
     impostos_venda = None
     impostos_venda_formatado = None
 
+    impostos_compra = None
+    impostos_compra_formatado = None
+
     # Só valida os dados, não insere nada no BD
     if form.validate_on_submit():
         # Cálculo de impostos de venda (ICMS + PIS/COFINS) * Valor de venda
@@ -83,6 +89,27 @@ def nova_reserva():
             form.pis_cofins_percent.data,
         )
         impostos_venda_formatado = _formatar_brl(impostos_venda)
+
+        # Impostos sobre compra
+        # base = valor_compra da máquina escolhida no BD
+        maquina_escolhida = None
+        if form.maquina_id.data:
+            mid = form.maquina_id.data
+            maquina_escolhida = next(
+                (m for m in maquinas if m.id_maquina == mid),
+                None,
+            )
+
+        valor_base_compra = (
+            maquina_escolhida.valor_compra if maquina_escolhida is not None else None
+        )
+
+        impostos_compra = calcular_impostos_compra(
+            valor_base_compra,
+            form.icms_pis_compra_percent.data,
+            form.pis_cofins_compra_percent.data,
+        )
+        impostos_compra_formatado = _formatar_brl(impostos_compra)
 
         flash(
             "Dados da reserva validados com sucesso (ainda sem gravar no banco).",
@@ -94,4 +121,6 @@ def nova_reserva():
         form=form,
         impostos_venda=impostos_venda,
         impostos_venda_formatado=impostos_venda_formatado,
+        impostos_compra=impostos_compra,
+        impostos_compra_formatado=impostos_compra_formatado,
     )
