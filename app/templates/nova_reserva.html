@@ -8,731 +8,994 @@
 {% block content %}
 <div class="container-fluid py-3">
     <div class="row justify-content-center">
-        <div class="col-12 d-flex justify-content-center">
+        <div class="col-12 reserva-layout">
+
+            {% if form.errors %}
+            <div class="alert alert-danger py-2 px-3 small mb-3">
+                <strong>Ops!</strong> Alguns campos precisam de atenção.
+            </div>
+            {% endif %}
 
             <form method="post" novalidate>
                 {{ form.hidden_tag() }}
 
-                {% if form.errors %}
-                <div class="alert alert-danger py-2 px-3 small mb-3">
-                    <strong>Ops!</strong> Alguns campos precisam de atenção.
-                </div>
-                {% endif %}
+                <div class="row g-3">
+                    <!-- COLUNA ESQUERDA: DADOS E LANÇAMENTOS -->
+                    <div class="col-lg-8">
 
-                <div class="card shadow-sm border-0 w-100" style="max-width:95vw;">
-                    <div class="card-header border-0 bg-light">
-                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                            <div>
-                                <h1 class="h6 mb-1 text-uppercase text-muted fw-semibold">
-                                    Nova Reserva
-                                </h1>
+                        <!-- CARD: CABEÇALHO + DADOS BÁSICOS -->
+                        <div class="card shadow-sm border-0 mb-3">
+                            <div class="card-header bg-white border-0 pb-2">
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                    <div>
+                                        <h1 class="h6 mb-1 text-uppercase text-muted fw-semibold">
+                                            Nova Reserva
+                                        </h1>
+                                        <p class="text-muted small mb-0">
+                                            Informe os dados comerciais, máquina e condições da venda para calcular a
+                                            margem.
+                                        </p>
+                                    </div>
+                                    <span class="badge rounded-pill text-bg-secondary opacity-75">
+                                        Cálculo de margem
+                                    </span>
+                                </div>
                             </div>
-                            <span class="badge rounded-pill text-bg-secondary opacity-75">
-                                Cálculo de margem
-                            </span>
+
+                            <div class="card-body pt-3">
+
+                                <!-- Seção: Dados comerciais -->
+                                <section class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="card-section-title text-muted fw-semibold">
+                                            DADOS COMERCIAIS
+                                        </span>
+                                        <span class="badge bg-light text-muted border summary-pill">
+                                            Passo 1
+                                        </span>
+                                    </div>
+
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-6">
+                                            <label class="form-label mb-1 small">{{ form.cliente.label }}</label>
+                                            {{ form.cliente(class="form-control form-control-sm",
+                                            placeholder="C00002 - CLIENTE TESTE 2") }}
+                                            {% for error in form.cliente.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label class="form-label mb-1 small">{{ form.empresa.label }}</label>
+                                            {{ form.empresa(class="form-select form-select-sm", id="empresa") }}
+                                            {% for error in form.empresa.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label class="form-label mb-1 small">{{ form.filial.label }}</label>
+                                            {{ form.filial(class="form-select form-select-sm", id="filial") }}
+                                            {% for error in form.filial.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label mb-1 small">{{ form.nome_vendedor.label }}</label>
+                                            {{ form.nome_vendedor(class="form-control form-control-sm",
+                                            placeholder="ALISSON CARNELÓS") }}
+                                            {% for error in form.nome_vendedor.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label class="form-label mb-1 small">{{ form.data_reserva.label }}</label>
+                                            {{ form.data_reserva(class="form-control form-control-sm") }}
+                                            {% for error in form.data_reserva.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label class="form-label mb-1 small">{{ form.previsao_entrega.label
+                                                }}</label>
+                                            {{ form.previsao_entrega(class="form-control form-control-sm",
+                                            placeholder="mm/aa") }}
+                                            {% for error in form.previsao_entrega.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <label class="form-label mb-1 small">{{ form.possui_af.label }}</label>
+                                            {{ form.possui_af(class="form-select form-select-sm") }}
+                                            {% for error in form.possui_af.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Seção: Máquina -->
+                                <hr class="my-3">
+                                <section class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="card-section-title text-muted fw-semibold">
+                                            MÁQUINA
+                                        </span>
+                                        <span class="badge bg-light text-muted border summary-pill">
+                                            Passo 2
+                                        </span>
+                                    </div>
+
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-8">
+                                            <label class="form-label mb-1 small">{{ form.maquina_id.label }}</label>
+                                            {{ form.maquina_id(class="form-select form-select-sm") }}
+                                            <small class="text-muted d-block mt-1 small">
+                                                Selecione uma máquina cadastrada no banco de dados.
+                                            </small>
+                                            {% for error in form.maquina_id.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label mb-1 small">{{ form.filtro_maquina.label }}</label>
+                                            {{ form.filtro_maquina(class="form-control form-control-sm",
+                                            placeholder="Filtrar por código/modelo") }}
+                                            <small class="text-muted d-block mt-1 small">
+                                                Digite e envie o formulário para refinar a lista.
+                                            </small>
+                                            {% for error in form.filtro_maquina.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label class="form-label mb-1 small">{{ form.quantidade.label }}</label>
+                                            <div class="input-group input-group-sm">
+                                                {{ form.quantidade(class="form-control text-end") }}
+                                            </div>
+                                            {% for error in form.quantidade.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-4 col-lg-3 ms-auto">
+                                            <label class="form-label mb-1 small">Valor da máquina selecionada</label>
+                                            <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                                {% if valor_maquina_base_formatado %}
+                                                R$ {{ valor_maquina_base_formatado }}
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Seção: Condições financeiras -->
+                                <hr class="my-3">
+                                <section class="mb-1">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="card-section-title text-muted fw-semibold">
+                                            CONDIÇÕES FINANCEIRAS
+                                        </span>
+                                        <span class="badge bg-light text-muted border summary-pill">
+                                            Passo 3
+                                        </span>
+                                    </div>
+
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-4">
+                                            <label class="form-label mb-1 small">{{ form.tipo_venda.label }}</label>
+                                            {{ form.tipo_venda(class="form-select form-select-sm") }}
+                                            {% for error in form.tipo_venda.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label mb-1 small">{{ form.modalidade_financiamento.label
+                                                }}</label>
+                                            {{ form.modalidade_financiamento(class="form-control form-control-sm",
+                                            placeholder="N/A") }}
+                                            {% for error in form.modalidade_financiamento.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-label mb-1 small">{{ form.banco_financiamento.label
+                                                }}</label>
+                                            {{ form.banco_financiamento(class="form-control form-control-sm",
+                                            placeholder="N/A") }}
+                                            {% for error in form.banco_financiamento.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <label class="form-label mb-1 small">{{ form.contato_banco.label }}</label>
+                                            {{ form.contato_banco(class="form-control form-control-sm") }}
+                                            {% for error in form.contato_banco.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
                         </div>
 
-                        <ul class="nav nav-tabs card-header-tabs mt-3 small" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="tab-dados-comerciais" data-bs-toggle="tab"
-                                    data-bs-target="#pane-dados-comerciais" type="button" role="tab"
-                                    aria-controls="pane-dados-comerciais" aria-selected="true">
-                                    Dados comerciais
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="tab-maquina" data-bs-toggle="tab"
-                                    data-bs-target="#pane-maquina" type="button" role="tab" aria-controls="pane-maquina"
-                                    aria-selected="false">
-                                    Máquina
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="tab-condicoes" data-bs-toggle="tab"
-                                    data-bs-target="#pane-condicoes" type="button" role="tab"
-                                    aria-controls="pane-condicoes" aria-selected="false">
-                                    Condições financeiras
-                                </button>
-                            </li>
-                        </ul>
+                        <!-- CARD: IMPOSTOS, FRETES E CUSTOS -->
+                        <div class="card shadow-sm border-0 mb-3">
+                            <div class="card-header bg-white border-0 pb-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="card-section-title text-muted fw-semibold">
+                                        IMPOSTOS, FRETES E CUSTOS
+                                    </span>
+                                    <small class="text-muted small">
+                                        Base para o cálculo da margem
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="card-body pt-3">
+
+                                <!-- Impostos sobre venda -->
+                                <section class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted small fw-semibold">
+                                            Impostos sobre venda
+                                        </span>
+                                        <small class="text-muted small">
+                                            (ICMS + PIS/COFINS) × Valor de venda
+                                        </small>
+                                    </div>
+
+                                    <div class="row g-3 align-items-end mb-2">
+                                        <!-- Valor de venda + resumo rápido da margem -->
+                                        <div class="col-lg-4">
+                                            <label class="form-label mb-1 small">{{ form.valor_venda.label }}</label>
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text">R$</span>
+                                                {{ form.valor_venda(class="form-control text-end") }}
+                                            </div>
+                                            {% for error in form.valor_venda.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-lg-8">
+                                            <div class="bg-light p-2 p-md-3 result-box h-100">
+                                                <div class="row g-2 align-items-stretch">
+                                                    <div class="col-12 col-md-4">
+                                                        <div class="border rounded-3 p-2 h-100">
+                                                            <div class="summary-label text-muted">
+                                                                Margem de Contribuição
+                                                            </div>
+                                                            <div class="summary-value fw-semibold text-end">
+                                                                {% if margem_contribuicao_valor_formatado %}
+                                                                R$ {{ margem_contribuicao_valor_formatado }}
+                                                                {% else %}
+                                                                -
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-4">
+                                                        <div class="border rounded-3 p-2 h-100">
+                                                            <div class="summary-label text-muted">
+                                                                Margem % RB
+                                                            </div>
+                                                            <div class="summary-value fw-semibold text-end">
+                                                                {% if percentual_margem_rb_valor_formatado %}
+                                                                R$ {{ percentual_margem_rb_valor_formatado }}
+                                                                {% else %}
+                                                                -
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-4">
+                                                        <div class="border rounded-3 p-2 h-100">
+                                                            <div class="summary-label text-muted">
+                                                                % RB
+                                                            </div>
+                                                            <div class="summary-value fw-semibold text-end">
+                                                                {% if percentual_rb_valor_formatado %}
+                                                                {{ percentual_rb_valor_formatado }} %
+                                                                {% else %}
+                                                                -
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <small class="text-muted small d-block mt-2">
+                                                    Os valores são calculados após validar os dados da reserva.
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-3 col-lg-2">
+                                            <label class="form-label mb-1 small">{{ form.icms_percent.label }}</label>
+                                            <div class="input-group input-group-sm">
+                                                {{ form.icms_percent(class="form-control text-end") }}
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            {% for error in form.icms_percent.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-3 col-lg-2">
+                                            <label class="form-label mb-1 small">{{ form.pis_cofins_percent.label
+                                                }}</label>
+                                            <div class="input-group input-group-sm">
+                                                {{ form.pis_cofins_percent(class="form-control text-end") }}
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            {% for error in form.pis_cofins_percent.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-4 col-lg-3 ms-auto">
+                                            <label class="form-label mb-1 small">Impostos sobre venda</label>
+                                            <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                                {% if impostos_venda_formatado %}
+                                                R$ {{ impostos_venda_formatado }}
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Impostos sobre compra -->
+                                <hr class="my-3">
+                                <section class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted small fw-semibold">
+                                            Impostos sobre compra
+                                        </span>
+                                        <small class="text-muted small">
+                                            (ICMS + PIS/COFINS) × Valor de compra + (PIS/COFINS × Valor de compra)
+                                        </small>
+                                    </div>
+
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-3 col-lg-3">
+                                            <label class="form-label mb-1 small">{{ form.icms_pis_compra_percent.label
+                                                }}</label>
+                                            <div class="input-group input-group-sm">
+                                                {{ form.icms_pis_compra_percent(class="form-control text-end") }}
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            {% for error in form.icms_pis_compra_percent.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-3 col-lg-3">
+                                            <label class="form-label mb-1 small">{{ form.pis_cofins_compra_percent.label
+                                                }}</label>
+                                            <div class="input-group input-group-sm">
+                                                {{ form.pis_cofins_compra_percent(class="form-control text-end") }}
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            {% for error in form.pis_cofins_compra_percent.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-12 col-md-4 col-lg-3 ms-auto">
+                                            <label class="form-label mb-1 small">Impostos sobre compra (total)</label>
+                                            <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                                {% if impostos_compra_formatado %}
+                                                R$ {{ impostos_compra_formatado }}
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Crédito impostos - frete compra -->
+                                <hr class="my-3">
+                                <section class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted small fw-semibold">
+                                            Crédito de impostos (frete de compra)
+                                        </span>
+                                        <small class="text-muted small">
+                                            Crédito = frete compra × % crédito
+                                        </small>
+                                    </div>
+
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-4 col-lg-3">
+                                            <label class="form-label mb-1 small">{{ form.frete_compra.label }}</label>
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text">R$</span>
+                                                {{ form.frete_compra(class="form-control text-end") }}
+                                            </div>
+                                            {% for error in form.frete_compra.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-3 col-lg-2">
+                                            <label class="form-label mb-1 small">{{ form.credito_impostos_percent.label
+                                                }}</label>
+                                            <div class="input-group input-group-sm">
+                                                {{ form.credito_impostos_percent(class="form-control text-end") }}
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            {% for error in form.credito_impostos_percent.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-12 col-md-4 col-lg-3 ms-auto">
+                                            <label class="form-label mb-1 small">Crédito de impostos (R$)</label>
+                                            <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                                {% if credito_impostos_valor_formatado %}
+                                                R$ {{ credito_impostos_valor_formatado }}
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Crédito impostos - frete venda -->
+                                <hr class="my-3">
+                                <section class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted small fw-semibold">
+                                            Crédito de impostos (frete de venda)
+                                        </span>
+                                        <small class="text-muted small">
+                                            Crédito = frete venda × % crédito
+                                        </small>
+                                    </div>
+
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-4 col-lg-3">
+                                            <label class="form-label mb-1 small">{{ form.frete_venda.label }}</label>
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text">R$</span>
+                                                {{ form.frete_venda(class="form-control text-end") }}
+                                            </div>
+                                            {% for error in form.frete_venda.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-3 col-lg-2">
+                                            <label class="form-label mb-1 small">{{
+                                                form.credito_impostos_venda_percent.label }}</label>
+                                            <div class="input-group input-group-sm">
+                                                {{ form.credito_impostos_venda_percent(class="form-control text-end") }}
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            {% for error in form.credito_impostos_venda_percent.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-12 col-md-4 col-lg-3 ms-auto">
+                                            <label class="form-label mb-1 small">Crédito de impostos venda (R$)</label>
+                                            <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                                {% if credito_impostos_venda_valor_formatado %}
+                                                R$ {{ credito_impostos_venda_valor_formatado }}
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Custo financeiro / Carta fiança / Cortesia -->
+                                <hr class="my-3">
+                                <section class="mb-1">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted small fw-semibold">
+                                            Custo financeiro, carta fiança e cortesia
+                                        </span>
+                                    </div>
+
+                                    <div class="row g-3 align-items-end">
+                                        <!-- Custo financeiro -->
+                                        <div class="col-md-4 col-lg-3">
+                                            <label class="form-label mb-1 small">{{ form.custo_financeiro.label
+                                                }}</label>
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text">R$</span>
+                                                {{ form.custo_financeiro(class="form-control text-end") }}
+                                            </div>
+                                            {% for error in form.custo_financeiro.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <!-- Carta fiança -->
+                                        <div class="col-md-4 col-lg-3">
+                                            <label class="form-label mb-1 small">{{ form.carta_fianca_percent.label
+                                                }}</label>
+                                            <div class="input-group input-group-sm mb-1">
+                                                {{ form.carta_fianca_percent(class="form-control text-end") }}
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            {% for error in form.carta_fianca_percent.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+
+                                            <small class="text-muted d-block mb-1 small">
+                                                Calculado sobre o valor de venda.
+                                            </small>
+
+                                            <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                                {% if carta_fianca_valor_formatado %}
+                                                R$ {{ carta_fianca_valor_formatado }}
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <!-- Cortesia -->
+                                        <div class="col-md-4 col-lg-3">
+                                            <label class="form-label mb-1 small">{{ form.cortesia.label }}</label>
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text">R$</span>
+                                                {{ form.cortesia(class="form-control text-end") }}
+                                            </div>
+                                            {% for error in form.cortesia.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+
+                        <!-- CARD: OPCIONAIS, MÃO DE OBRA, CONTRATOS -->
+                        <div class="card shadow-sm border-0 mb-3">
+                            <div class="card-header bg-white border-0 pb-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="card-section-title text-muted fw-semibold">
+                                        OPCIONAIS E MÃO DE OBRA
+                                    </span>
+                                    <div class="small text-muted">
+                                        Horas totais:
+                                        <span class="fw-semibold">
+                                            {% if total_horas_opcionais_formatado %}
+                                            {{ total_horas_opcionais_formatado }}
+                                            {% else %}
+                                            -
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-body pt-3">
+                                <!-- Opcionais -->
+                                <section class="mb-3">
+                                    <div class="table-responsive mb-2">
+                                        <table class="table table-sm align-middle mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th style="width: 60%">Descrição</th>
+                                                    <th style="width: 30%">Horas</th>
+                                                    <th style="width: 10%" class="text-center">Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="opcionais-rows">
+                                                {% set itens = opcionais_itens or [] %}
+                                                {% if itens %}
+                                                {% for item in itens %}
+                                                <tr class="opcional-row">
+                                                    <td>
+                                                        <input type="text" name="opcional_nome"
+                                                            class="form-control form-control-sm" maxlength="150"
+                                                            value="{{ item.nome }}"
+                                                            placeholder="Ex.: AGREGA KIT INVERSÃO">
+                                                    </td>
+                                                    <td>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="text" name="opcional_horas"
+                                                                class="form-control text-end" value="{{ item.horas }}"
+                                                                placeholder="0,00">
+                                                            <span class="input-group-text">h</span>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                                            onclick="removerOpcionalRow(this)" title="Remover linha">
+                                                            &times;
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                                {% else %}
+                                                <tr class="opcional-row">
+                                                    <td>
+                                                        <input type="text" name="opcional_nome"
+                                                            class="form-control form-control-sm" maxlength="150"
+                                                            placeholder="Ex.: AGREGA KIT INVERSÃO">
+                                                    </td>
+                                                    <td>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="text" name="opcional_horas"
+                                                                class="form-control text-end" placeholder="0,00">
+                                                            <span class="input-group-text">h</span>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                                            onclick="removerOpcionalRow(this)" title="Remover linha">
+                                                            &times;
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center mb-3 small">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                            id="btn-add-opcional">
+                                            + Adicionar linha
+                                        </button>
+                                    </div>
+                                </section>
+
+                                <!-- Mão de obra agrega/desagrega -->
+                                <hr class="my-3">
+                                <section class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted small fw-semibold">
+                                            Mão de obra agrega / desagrega
+                                        </span>
+                                        <small class="text-muted small">
+                                            Valor = horas × R$ 200,00
+                                        </small>
+                                    </div>
+
+                                    <div class="row g-3 align-items-end mb-2">
+                                        <div class="col-md-4 col-lg-3">
+                                            <label class="form-label mb-1 small">{{
+                                                form.mao_obra_agrega_desagrega_horas.label }}</label>
+                                            <div class="input-group input-group-sm">
+                                                {{ form.mao_obra_agrega_desagrega_horas(class="form-control text-end")
+                                                }}
+                                                <span class="input-group-text">h</span>
+                                            </div>
+                                            {% for error in form.mao_obra_agrega_desagrega_horas.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-12 col-md-4 col-lg-3 ms-auto">
+                                            <label class="form-label mb-1 small">Mão de obra agrega/desagrega
+                                                (R$)</label>
+                                            <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                                {% if mao_obra_agrega_desagrega_valor_formatado %}
+                                                R$ {{ mao_obra_agrega_desagrega_valor_formatado }}
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Contrato / Entrega técnica / PDI / Garantia -->
+                                <hr class="my-3">
+                                <section class="mb-1">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted small fw-semibold">
+                                            Contrato de manutenção, Entrega Técnica / PDI / Garantia
+                                        </span>
+                                    </div>
+
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-4 col-lg-3">
+                                            <label class="form-label mb-1 small">{{ form.contrato_manutencao.label
+                                                }}</label>
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text">R$</span>
+                                                {{ form.contrato_manutencao(class="form-control text-end") }}
+                                            </div>
+                                            {% for error in form.contrato_manutencao.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-3 col-lg-2">
+                                            <label class="form-label mb-1 small">{{
+                                                form.entrega_tecnica_pdi_garantia_percent.label }}</label>
+                                            <div class="input-group input-group-sm">
+                                                {{ form.entrega_tecnica_pdi_garantia_percent(class="form-control
+                                                text-end") }}
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            {% for error in form.entrega_tecnica_pdi_garantia_percent.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-4 col-lg-3 ms-auto">
+                                            <label class="form-label mb-1 small">Entrega Técnica / PDI / Garantia
+                                                (R$)</label>
+                                            <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                                {% if entrega_tecnica_pdi_garantia_valor_formatado %}
+                                                R$ {{ entrega_tecnica_pdi_garantia_valor_formatado }}
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+
+                        <!-- CARD: COMISSÃO DO VENDEDOR -->
+                        <div class="card shadow-sm border-0 mb-3">
+                            <div class="card-header bg-white border-0 pb-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="card-section-title text-muted fw-semibold">
+                                        COMISSÃO DO VENDEDOR
+                                    </span>
+                                    <small class="text-muted small">
+                                        Comissão bruta, DSR e encargos
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="card-body pt-3">
+                                <!-- Linha 1: total da comissão -->
+                                <section class="mb-3">
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-4 col-lg-3">
+                                            <label class="form-label mb-1 small">Comissão total do vendedor (R$)</label>
+                                            <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                                {% if comissao_total_vendedor_valor_formatado %}
+                                                R$ {{ comissao_total_vendedor_valor_formatado }}
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 col-lg-3">
+                                            <label class="form-label mb-1 small">% Comissão total sobre a venda</label>
+                                            <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                                {% if comissao_total_vendedor_percent_formatado %}
+                                                {{ comissao_total_vendedor_percent_formatado }} %
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Linha 2: detalhes da comissão -->
+                                <section class="mb-1">
+                                    <div class="row g-3 align-items-end">
+                                        <!-- Comissão bruta -->
+                                        <div class="col-md-4 col-lg-3">
+                                            <label class="form-label mb-1 small">{{ form.comissao_bruta_percent.label
+                                                }}</label>
+                                            <div class="input-group input-group-sm mb-1">
+                                                {{ form.comissao_bruta_percent(class="form-control text-end") }}
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            {% for error in form.comissao_bruta_percent.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+
+                                            <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                                {% if comissao_bruta_valor_formatado %}
+                                                R$ {{ comissao_bruta_valor_formatado }}
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <!-- DSR -->
+                                        <div class="col-md-4 col-lg-3">
+                                            <label class="form-label mb-1 small">{{ form.dsr_percent.label }}</label>
+                                            <div class="input-group input-group-sm mb-1">
+                                                {{ form.dsr_percent(class="form-control text-end") }}
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            {% for error in form.dsr_percent.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                            <small class="text-muted d-block mb-1 small">
+                                                Calculado sobre a comissão bruta.
+                                            </small>
+                                            <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                                {% if dsr_valor_formatado %}
+                                                R$ {{ dsr_valor_formatado }}
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        <!-- Encargos comissão -->
+                                        <div class="col-md-4 col-lg-3">
+                                            <label class="form-label mb-1 small">{{ form.encargos_comissao_percent.label
+                                                }}</label>
+                                            <div class="input-group input-group-sm mb-1">
+                                                {{ form.encargos_comissao_percent(class="form-control text-end") }}
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            {% for error in form.encargos_comissao_percent.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                            <small class="text-muted d-block mb-1 small">
+                                                Calculado sobre (Comissão Bruta + DSR).
+                                            </small>
+                                            <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                                {% if encargos_comissao_valor_formatado %}
+                                                R$ {{ encargos_comissao_valor_formatado }}
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div class="card-body p-3">
-                        <div class="tab-content">
-
-                            <!-- Dados comerciais -->
-                            <div class="tab-pane fade show active" id="pane-dados-comerciais" role="tabpanel"
-                                aria-labelledby="tab-dados-comerciais">
-                                <div class="row g-3 align-items-end">
-
-                                    <div class="col-md-6">
-                                        <label class="form-label mb-1 small">{{ form.cliente.label }}</label>
-                                        {{ form.cliente(class="form-control form-control-sm", placeholder="C00002 -
-                                        CLIENTE TESTE 2") }}
-                                        {% for error in form.cliente.errors %}
-                                        <div class="text-danger small">{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <label class="form-label mb-1 small">{{ form.empresa.label }}</label>
-                                        {{ form.empresa(class="form-select form-select-sm", id="empresa") }}
-                                        {% for error in form.empresa.errors %}
-                                        <div class="text-danger small">{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <label class="form-label mb-1 small">{{ form.filial.label }}</label>
-                                        {{ form.filial(class="form-select form-select-sm", id="filial") }}
-                                        {% for error in form.filial.errors %}
-                                        <div class="text-danger small">{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <label class="form-label mb-1 small">{{ form.nome_vendedor.label }}</label>
-                                        {{ form.nome_vendedor(class="form-control form-control-sm", placeholder="ALISSON
-                                        CARNELÓS") }}
-                                        {% for error in form.nome_vendedor.errors %}
-                                        <div class="text-danger small">{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <label class="form-label mb-1 small">{{ form.data_reserva.label }}</label>
-                                        {{ form.data_reserva(class="form-control form-control-sm") }}
-                                        {% for error in form.data_reserva.errors %}
-                                        <div class="text-danger small">{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <label class="form-label mb-1 small">{{ form.previsao_entrega.label }}</label>
-                                        {{ form.previsao_entrega(class="form-control form-control-sm",
-                                        placeholder="mm/aa") }}
-                                        {% for error in form.previsao_entrega.errors %}
-                                        <div class="text-danger small">{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-
-                                    <div class="col-md-2">
-                                        <label class="form-label mb-1 small">{{ form.possui_af.label }}</label>
-                                        {{ form.possui_af(class="form-select form-select-sm") }}
-                                        {% for error in form.possui_af.errors %}
-                                        <div class="text-danger small">{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-
+                    <!-- COLUNA DIREITA: RESUMO DA MARGEM -->
+                    <div class="col-lg-4">
+                        <div class="card shadow-sm border-0 sticky-summary">
+                            <div class="card-header bg-white border-0 pb-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="card-section-title text-muted fw-semibold">
+                                        RESUMO DA MARGEM
+                                    </span>
+                                    <span class="badge rounded-pill bg-light text-muted border summary-pill">
+                                        Visão rápida
+                                    </span>
                                 </div>
+                                <p class="text-muted small mb-0">
+                                    Principais indicadores calculados após validar os dados.
+                                </p>
                             </div>
 
-                            <!-- Máquina -->
-                            <div class="tab-pane fade" id="pane-maquina" role="tabpanel" aria-labelledby="tab-maquina">
-                                <div class="row g-3 align-items-end">
+                            <div class="card-body small pt-3">
 
-                                    <div class="col-md-8">
-                                        <label class="form-label mb-1 small">{{ form.maquina_id.label }}</label>
-                                        {{ form.maquina_id(class="form-select form-select-sm") }}
-                                        <small class="text-muted d-block mt-1 small">
-                                            Selecione uma máquina cadastrada no banco de dados.
-                                        </small>
-                                        {% for error in form.maquina_id.errors %}
-                                        <div class="text-danger small">{{ error }}</div>
-                                        {% endfor %}
+                                <div class="mb-3">
+                                    <div class="summary-label text-muted">
+                                        Margem de Contribuição
                                     </div>
-
-                                    <div class="col-md-4">
-                                        <label class="form-label mb-1 small">{{ form.filtro_maquina.label }}</label>
-                                        {{ form.filtro_maquina(class="form-control form-control-sm",
-                                        placeholder="Filtrar por código/modelo") }}
-                                        <small class="text-muted d-block mt-1 small">
-                                            Digite e envie o formulário para refinar a lista.
-                                        </small>
-                                        {% for error in form.filtro_maquina.errors %}
-                                        <div class="text-danger small">{{ error }}</div>
-                                        {% endfor %}
+                                    <div class="summary-value fw-semibold text-end">
+                                        {% if margem_contribuicao_valor_formatado %}
+                                        R$ {{ margem_contribuicao_valor_formatado }}
+                                        {% else %}
+                                        -
+                                        {% endif %}
                                     </div>
+                                </div>
 
-                                    <div class="col-md-3">
-                                        <label class="form-label mb-1 small">{{ form.quantidade.label }}</label>
-                                        <div class="input-group input-group-sm">
-                                            {{ form.quantidade(class="form-control text-end") }}
+                                <div class="row g-2 mb-3">
+                                    <div class="col-6">
+                                        <div class="border rounded-3 p-2 h-100">
+                                            <div class="summary-label text-muted">
+                                                % RB
+                                            </div>
+                                            <div class="summary-value fw-semibold text-end">
+                                                {% if percentual_rb_valor_formatado %}
+                                                {{ percentual_rb_valor_formatado }} %
+                                                {% else %}
+                                                -
+                                                {% endif %}
+                                            </div>
                                         </div>
-                                        {% for error in form.quantidade.errors %}
-                                        <div class="text-danger small">{{ error }}</div>
-                                        {% endfor %}
                                     </div>
-
-                                </div>
-                            </div>
-
-                            <!-- Condições financeiras -->
-                            <div class="tab-pane fade" id="pane-condicoes" role="tabpanel"
-                                aria-labelledby="tab-condicoes">
-                                <div class="row g-3 align-items-end">
-
-                                    <div class="col-md-4">
-                                        <label class="form-label mb-1 small">{{ form.tipo_venda.label }}</label>
-                                        {{ form.tipo_venda(class="form-select form-select-sm") }}
-                                        {% for error in form.tipo_venda.errors %}
-                                        <div class="text-danger small">{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <label class="form-label mb-1 small">{{ form.modalidade_financiamento.label
-                                            }}</label>
-                                        {{ form.modalidade_financiamento(class="form-control form-control-sm",
-                                        placeholder="N/A") }}
-                                        {% for error in form.modalidade_financiamento.errors %}
-                                        <div class="text-danger small">{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <label class="form-label mb-1 small">{{ form.banco_financiamento.label
-                                            }}</label>
-                                        {{ form.banco_financiamento(class="form-control form-control-sm",
-                                        placeholder="N/A") }}
-                                        {% for error in form.banco_financiamento.errors %}
-                                        <div class="text-danger small">{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <label class="form-label mb-1 small">{{ form.contato_banco.label }}</label>
-                                        {{ form.contato_banco(class="form-control form-control-sm") }}
-                                        {% for error in form.contato_banco.errors %}
-                                        <div class="text-danger small">{{ error }}</div>
-                                        {% endfor %}
-                                    </div>
-
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <!-- Análise de Margens / Impostos Venda -->
-                        <hr class="my-4">
-
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h2 class="h6 mb-0 text-muted text-uppercase small">
-                                Análise de margens, impostos sobre venda
-                            </h2>
-                            <small class="text-muted small">
-                                (ICMS + PIS/COFINS) x Valor de venda
-                            </small>
-                        </div>
-
-                        <div class="row g-3 align-items-end">
-                            <div class="col-md-4 col-lg-3">
-                                <label class="form-label mb-1 small">{{ form.valor_venda.label }}</label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text">R$</span>
-                                    {{ form.valor_venda(class="form-control text-end") }}
-                                </div>
-                                {% for error in form.valor_venda.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-md-3 col-lg-2">
-                                <label class="form-label mb-1 small">{{ form.icms_percent.label }}</label>
-                                <div class="input-group input-group-sm">
-                                    {{ form.icms_percent(class="form-control text-end") }}
-                                    <span class="input-group-text">%</span>
-                                </div>
-                                {% for error in form.icms_percent.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-md-3 col-lg-2">
-                                <label class="form-label mb-1 small">{{ form.pis_cofins_percent.label }}</label>
-                                <div class="input-group input-group-sm">
-                                    {{ form.pis_cofins_percent(class="form-control text-end") }}
-                                    <span class="input-group-text">%</span>
-                                </div>
-                                {% for error in form.pis_cofins_percent.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-md-4 col-lg-3 ms-auto">
-                                <label class="form-label mb-1 small">Impostos sobre venda</label>
-                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                    {% if impostos_venda_formatado %}
-                                    R$ {{ impostos_venda_formatado }}
-                                    {% else %}
-                                    -
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- CMV -->
-                        <hr class="my-4">
-
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h2 class="h6 mb-0 text-muted text-uppercase small">
-                                Análise de Margens
-                            </h2>
-                        </div>
-
-                        <div class="row g-3 align-items-end">
-                            <div class="col-md-4 col-lg-3">
-                                <label class="form-label mb-1 small">Valor da máquina selecionada</label>
-                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                    {% if valor_maquina_base_formatado %}
-                                    R$ {{ valor_maquina_base_formatado }}
-                                    {% else %}
-                                    -
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <div class="col-md-4 col-lg-3 ms-auto">
-                                <label class="form-label mb-1 small">Margem % RB</label>
-                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                    {% if percentual_margem_rb_valor_formatado %}
-                                    R$ {{ percentual_margem_rb_valor_formatado }}
-                                    {% else %}
-                                    -
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-lg-3 ms-auto">
-                                <label class="form-label mb-1 small">% RB</label>
-                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                    {% if percentual_rb_valor_formatado %}
-                                    R$ {{ percentual_rb_valor_formatado }}
-                                    {% else %}
-                                    -
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-lg-3 ms-auto">
-                                <label class="form-label mb-1 small">Custo da Mercadoria Vendida (CMV)</label>
-                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                    {% if cmv_valor_formatado %}
-                                    R$ {{ cmv_valor_formatado }}
-                                    {% else %}
-                                    -
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Análise de Margens / Impostos Compra -->
-                        <hr class="my-4">
-
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h2 class="h6 mb-0 text-muted text-uppercase small">
-                                Análise de margens, impostos sobre compra
-                            </h2>
-                            <small class="text-muted small">
-                                (ICMS + PIS/COFINS) × Valor de compra + (PIS/COFINS × Valor de compra)
-                            </small>
-                        </div>
-
-                        <div class="row g-3 align-items-end">
-                            <div class="col-md-3 col-lg-3">
-                                <label class="form-label mb-1 small">{{ form.icms_pis_compra_percent.label }}</label>
-                                <div class="input-group input-group-sm">
-                                    {{ form.icms_pis_compra_percent(class="form-control text-end") }}
-                                    <span class="input-group-text">%</span>
-                                </div>
-                                {% for error in form.icms_pis_compra_percent.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-md-3 col-lg-3">
-                                <label class="form-label mb-1 small">{{ form.pis_cofins_compra_percent.label }}</label>
-                                <div class="input-group input-group-sm">
-                                    {{ form.pis_cofins_compra_percent(class="form-control text-end") }}
-                                    <span class="input-group-text">%</span>
-                                </div>
-                                {% for error in form.pis_cofins_compra_percent.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-12 col-md-4 col-lg-3 ms-auto">
-                                <label class="form-label mb-1 small">Impostos sobre compra (total)</label>
-                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                    {% if impostos_compra_formatado %}
-                                    R$ {{ impostos_compra_formatado }}
-                                    {% else %}
-                                    -
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Opcionais / Agrega / Desagrega -->
-                        <hr class="my-4">
-
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h2 class="h6 mb-0 text-muted text-uppercase small">
-                                Opcionais / Agrega / Desagrega
-                            </h2>
-                            <div class="small text-muted">
-                                Horas totais:
-                                <span class="fw-semibold">
-                                    {% if total_horas_opcionais_formatado %}
-                                    {{ total_horas_opcionais_formatado }}
-                                    {% else %}
-                                    -
-                                    {% endif %}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="table-responsive mb-2">
-                            <table class="table table-sm align-middle mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th style="width: 60%">Descrição</th>
-                                        <th style="width: 30%">Horas</th>
-                                        <th style="width: 10%" class="text-center">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="opcionais-rows">
-                                    {% set itens = opcionais_itens or [] %}
-                                    {% if itens %}
-                                    {% for item in itens %}
-                                    <tr class="opcional-row">
-                                        <td>
-                                            <input type="text" name="opcional_nome" class="form-control form-control-sm"
-                                                maxlength="150" value="{{ item.nome }}"
-                                                placeholder="Ex.: AGREGA KIT INVERSÃO">
-                                        </td>
-                                        <td>
-                                            <div class="input-group input-group-sm">
-                                                <input type="text" name="opcional_horas" class="form-control text-end"
-                                                    value="{{ item.horas }}" placeholder="0,00">
-                                                <span class="input-group-text">h</span>
+                                    <div class="col-6">
+                                        <div class="border rounded-3 p-2 h-100">
+                                            <div class="summary-label text-muted">
+                                                Margem % RB
                                             </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <button type="button" class="btn btn-outline-danger btn-sm"
-                                                onclick="removerOpcionalRow(this)" title="Remover linha">
-                                                &times;
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                    {% else %}
-                                    <tr class="opcional-row">
-                                        <td>
-                                            <input type="text" name="opcional_nome" class="form-control form-control-sm"
-                                                maxlength="150" placeholder="Ex.: AGREGA KIT INVERSÃO">
-                                        </td>
-                                        <td>
-                                            <div class="input-group input-group-sm">
-                                                <input type="text" name="opcional_horas" class="form-control text-end"
-                                                    placeholder="0,00">
-                                                <span class="input-group-text">h</span>
+                                            <div class="summary-value fw-semibold text-end">
+                                                {% if percentual_margem_rb_valor_formatado %}
+                                                R$ {{ percentual_margem_rb_valor_formatado }}
+                                                {% else %}
+                                                -
+                                                {% endif %}
                                             </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <button type="button" class="btn btn-outline-danger btn-sm"
-                                                onclick="removerOpcionalRow(this)" title="Remover linha">
-                                                &times;
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    {% endif %}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center mb-3 small">
-                            <button type="button" class="btn btn-outline-secondary btn-sm" id="btn-add-opcional">
-                                + Adicionar linha
-                            </button>
-                        </div>
-
-                        <!-- Mão de Obra Agrega/Desagrega -->
-                        <hr class="my-4">
-
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h2 class="h6 mb-0 text-muted text-uppercase small">
-                                Mão de obra agrega / desagrega
-                            </h2>
-                            <small class="text-muted small">
-                                Valor = horas × R$ 200,00
-                            </small>
-                        </div>
-
-                        <div class="row g-3 align-items-end mb-2">
-                            <div class="col-md-4 col-lg-3">
-                                <label class="form-label mb-1 small">{{ form.mao_obra_agrega_desagrega_horas.label
-                                    }}</label>
-                                <div class="input-group input-group-sm">
-                                    {{ form.mao_obra_agrega_desagrega_horas(class="form-control text-end") }}
-                                    <span class="input-group-text">h</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                {% for error in form.mao_obra_agrega_desagrega_horas.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-                            </div>
 
-                            <div class="col-12 col-md-4 col-lg-3 ms-auto">
-                                <label class="form-label mb-1 small">Mão de obra agrega/desagrega (R$)</label>
-                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                    {% if mao_obra_agrega_desagrega_valor_formatado %}
-                                    R$ {{ mao_obra_agrega_desagrega_valor_formatado }}
-                                    {% else %}
-                                    -
-                                    {% endif %}
+                                <hr>
+
+                                <div class="mb-2">
+                                    <div class="summary-label text-muted">
+                                        Lucro Bruto
+                                    </div>
+                                    <div class="summary-value fw-semibold text-end">
+                                        {% if lucro_bruto_valor_formatado %}
+                                        R$ {{ lucro_bruto_valor_formatado }}
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <!-- Crédito de Impostos (Frete compra) -->
-                        <hr class="my-4">
-
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h2 class="h6 mb-0 text-muted text-uppercase small">
-                                Crédito de impostos (frete de compra)
-                            </h2>
-                            <small class="text-muted small">
-                                Crédito = frete compra × % crédito
-                            </small>
-                        </div>
-
-                        <div class="row g-3 align-items-end mb-2">
-                            <div class="col-md-4 col-lg-3">
-                                <label class="form-label mb-1 small">{{ form.frete_compra.label }}</label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text">R$</span>
-                                    {{ form.frete_compra(class="form-control text-end") }}
+                                <div class="mb-2">
+                                    <div class="summary-label text-muted">
+                                        CMV
+                                    </div>
+                                    <div class="summary-value fw-semibold text-end">
+                                        {% if cmv_valor_formatado %}
+                                        R$ {{ cmv_valor_formatado }}
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </div>
                                 </div>
-                                {% for error in form.frete_compra.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-                            </div>
 
-                            <div class="col-md-3 col-lg-2">
-                                <label class="form-label mb-1 small">{{ form.credito_impostos_percent.label }}</label>
-                                <div class="input-group input-group-sm">
-                                    {{ form.credito_impostos_percent(class="form-control text-end") }}
-                                    <span class="input-group-text">%</span>
+                                <hr>
+
+                                <div class="mb-2">
+                                    <div class="summary-label text-muted">
+                                        Impostos sobre venda
+                                    </div>
+                                    <div class="summary-value fw-semibold text-end">
+                                        {% if impostos_venda_formatado %}
+                                        R$ {{ impostos_venda_formatado }}
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </div>
                                 </div>
-                                {% for error in form.credito_impostos_percent.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-                            </div>
 
-                            <div class="col-12 col-md-4 col-lg-3 ms-auto">
-                                <label class="form-label mb-1 small">Crédito de impostos (R$)</label>
-                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                    {% if credito_impostos_valor_formatado %}
-                                    R$ {{ credito_impostos_valor_formatado }}
-                                    {% else %}
-                                    -
-                                    {% endif %}
+                                <div class="mb-2">
+                                    <div class="summary-label text-muted">
+                                        Impostos sobre compra
+                                    </div>
+                                    <div class="summary-value fw-semibold text-end">
+                                        {% if impostos_compra_formatado %}
+                                        R$ {{ impostos_compra_formatado }}
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <!-- Contrato de manutenção / Entrega Técnica / PDI / Garantia -->
-                        <div class="row g-3 align-items-end mt-3">
-                            <div class="col-md-4 col-lg-3">
-                                <label class="form-label mb-1 small">{{ form.contrato_manutencao.label }}</label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text">R$</span>
-                                    {{ form.contrato_manutencao(class="form-control text-end") }}
-                                </div>
-                                {% for error in form.contrato_manutencao.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-                            </div>
+                                <hr>
 
-                            <div class="col-md-3 col-lg-2">
-                                <label class="form-label mb-1 small">{{ form.entrega_tecnica_pdi_garantia_percent.label
-                                    }}</label>
-                                <div class="input-group input-group-sm">
-                                    {{ form.entrega_tecnica_pdi_garantia_percent(class="form-control text-end") }}
-                                    <span class="input-group-text">%</span>
-                                </div>
-                                {% for error in form.entrega_tecnica_pdi_garantia_percent.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-md-4 col-lg-3 ms-auto">
-                                <label class="form-label mb-1 small">Entrega Técnica / PDI / Garantia (R$)</label>
-                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                    {% if entrega_tecnica_pdi_garantia_valor_formatado %}
-                                    R$ {{ entrega_tecnica_pdi_garantia_valor_formatado }}
-                                    {% else %}
-                                    -
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Lucro Bruto -->
-                        <hr class="my-4">
-
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h2 class="h6 mb-0 text-muted text-uppercase small">
-                                Lucro Bruto
-                            </h2>
-                        </div>
-
-                        <div class="row g-3 align-items-end">
-                            <div class="col-md-4 col-lg-3 ms-auto">
-                                <label class="form-label mb-1 small">Lucro Bruto</label>
-                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                    {% if lucro_bruto_valor_formatado %}
-                                    R$ {{ lucro_bruto_valor_formatado }}
-                                    {% else %}
-                                    -
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row g-3 align-items-end">
-                            <div class="col-md-4 col-lg-3 ms-auto">
-                                <label class="form-label mb-1 small">Margem % RB</label>
-                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                    {% if percentual_margem_rb_valor_formatado %}
-                                    R$ {{ percentual_margem_rb_valor_formatado }}
-                                    {% else %}
-                                    -
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Crédito de Impostos (Frete venda) -->
-                        <hr class="my-4">
-
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h2 class="h6 mb-0 text-muted text-uppercase small">
-                                Crédito de impostos (frete de venda)
-                            </h2>
-                            <small class="text-muted small">
-                                Crédito = frete venda x % crédito
-                            </small>
-                        </div>
-
-                        <div class="row g-3 align-items-end mb-2">
-                            <div class="col-md-4 col-lg-3">
-                                <label class="form-label mb-1 small">{{ form.frete_venda.label }}</label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text">R$</span>
-                                    {{ form.frete_venda(class="form-control text-end") }}
-                                </div>
-                                {% for error in form.frete_venda.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-md-3 col-lg-2">
-                                <label class="form-label mb-1 small">{{ form.credito_impostos_venda_percent.label
-                                    }}</label>
-                                <div class="input-group input-group-sm">
-                                    {{ form.credito_impostos_venda_percent(class="form-control text-end") }}
-                                    <span class="input-group-text">%</span>
-                                </div>
-                                {% for error in form.credito_impostos_venda_percent.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <div class="col-12 col-md-4 col-lg-3 ms-auto">
-                                <label class="form-label mb-1 small">Crédito de impostos venda (R$)</label>
-                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                    {% if credito_impostos_venda_valor_formatado %}
-                                    R$ {{ credito_impostos_venda_valor_formatado }}
-                                    {% else %}
-                                    -
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Custo financeiro / Carta fiança / Cortesia -->
-                        <hr class="my-4">
-
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h2 class="h6 mb-0 text-muted text-uppercase small">
-                                Custo financeiro, carta fiança e cortesia
-                            </h2>
-                        </div>
-
-                        <div class="row g-3 align-items-end mb-2">
-                            <!-- Custo financeiro -->
-                            <div class="col-md-4 col-lg-3">
-                                <label class="form-label mb-1 small">{{ form.custo_financeiro.label }}</label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text">R$</span>
-                                    {{ form.custo_financeiro(class="form-control text-end") }}
-                                </div>
-                                {% for error in form.custo_financeiro.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <!-- Carta fiança (% + valor R$) -->
-                            <div class="col-md-4 col-lg-3">
-                                <label class="form-label mb-1 small">{{ form.carta_fianca_percent.label }}</label>
-                                <div class="input-group input-group-sm mb-1">
-                                    {{ form.carta_fianca_percent(class="form-control text-end") }}
-                                    <span class="input-group-text">%</span>
-                                </div>
-                                {% for error in form.carta_fianca_percent.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-
-                                <small class="text-muted d-block mb-1 small">
-                                    Calculado sobre o valor de venda.
-                                </small>
-
-                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                    {% if carta_fianca_valor_formatado %}
-                                    R$ {{ carta_fianca_valor_formatado }}
-                                    {% else %}
-                                    -
-                                    {% endif %}
-                                </div>
-                            </div>
-
-                            <!-- Cortesia -->
-                            <div class="col-md-4 col-lg-3">
-                                <label class="form-label mb-1 small">{{ form.cortesia.label }}</label>
-                                <div class="input-group input-group-sm">
-                                    <span class="input-group-text">R$</span>
-                                    {{ form.cortesia(class="form-control text-end") }}
-                                </div>
-                                {% for error in form.cortesia.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                                {% endfor %}
-                            </div>
-
-                            <!-- Comissão do vendedor -->
-                            <hr class="my-4">
-
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h2 class="h6 mb-0 text-muted text-uppercase small">
-                                    Comissão do vendedor
-                                </h2>
-                                <small class="text-muted small">
-                                    Comissão bruta, DSR, encargos sobre comissão e total sobre a venda
-                                </small>
-                            </div>
-
-                            <!-- Linha 1: Total da comissão do vendedor -->
-                            <div class="row g-3 align-items-end mb-2">
-                                <div class="col-md-4 col-lg-3">
-                                    <label class="form-label mb-1 small">Comissão total do vendedor (R$)</label>
-                                    <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                <div class="mb-2">
+                                    <div class="summary-label text-muted">
+                                        Comissão total do vendedor
+                                    </div>
+                                    <div class="summary-value fw-semibold text-end">
                                         {% if comissao_total_vendedor_valor_formatado %}
                                         R$ {{ comissao_total_vendedor_valor_formatado }}
                                         {% else %}
@@ -741,9 +1004,11 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-4 col-lg-3">
-                                    <label class="form-label mb-1 small">% Comissão total sobre a venda</label>
-                                    <div class="form-control form-control-sm text-end bg-light fw-semibold">
+                                <div class="mb-0">
+                                    <div class="summary-label text-muted">
+                                        % Comissão sobre a venda
+                                    </div>
+                                    <div class="summary-value fw-semibold text-end">
                                         {% if comissao_total_vendedor_percent_formatado %}
                                         {{ comissao_total_vendedor_percent_formatado }} %
                                         {% else %}
@@ -751,293 +1016,29 @@
                                         {% endif %}
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Linha 2: Comissão bruta, DSR, Encargos -->
-                            <div class="row g-3 align-items-end mb-2">
-                                <!-- Comissão Bruta -->
-                                <div class="col-md-4 col-lg-3">
-                                    <label class="form-label mb-1 small">{{ form.comissao_bruta_percent.label }}</label>
-                                    <div class="input-group input-group-sm mb-1">
-                                        {{ form.comissao_bruta_percent(class="form-control text-end") }}
-                                        <span class="input-group-text">%</span>
-                                    </div>
-                                    {% for error in form.comissao_bruta_percent.errors %}
-                                    <div class="text-danger small">{{ error }}</div>
-                                    {% endfor %}
-                                    <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                        {% if comissao_bruta_valor_formatado %}
-                                        R$ {{ comissao_bruta_valor_formatado }}
-                                        {% else %}
-                                        -
-                                        {% endif %}
-                                    </div>
-                                </div>
-
-                                <!-- DSR -->
-                                <div class="col-md-4 col-lg-3">
-                                    <label class="form-label mb-1 small">{{ form.dsr_percent.label }}</label>
-                                    <div class="input-group input-group-sm mb-1">
-                                        {{ form.dsr_percent(class="form-control text-end") }}
-                                        <span class="input-group-text">%</span>
-                                    </div>
-                                    {% for error in form.dsr_percent.errors %}
-                                    <div class="text-danger small">{{ error }}</div>
-                                    {% endfor %}
-                                    <small class="text-muted d-block mb-1 small">
-                                        Calculado sobre a comissão bruta.
-                                    </small>
-                                    <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                        {% if dsr_valor_formatado %}
-                                        R$ {{ dsr_valor_formatado }}
-                                        {% else %}
-                                        -
-                                        {% endif %}
-                                    </div>
-                                </div>
-
-                                <!-- Encargos comissão -->
-                                <div class="col-md-4 col-lg-3">
-                                    <label class="form-label mb-1 small">{{ form.encargos_comissao_percent.label
-                                        }}</label>
-                                    <div class="input-group input-group-sm mb-1">
-                                        {{ form.encargos_comissao_percent(class="form-control text-end") }}
-                                        <span class="input-group-text">%</span>
-                                    </div>
-                                    {% for error in form.encargos_comissao_percent.errors %}
-                                    <div class="text-danger small">{{ error }}</div>
-                                    {% endfor %}
-                                    <small class="text-muted d-block mb-1 small">
-                                        Calculado sobre (Comissão Bruta + DSR).
-                                    </small>
-                                    <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                        {% if encargos_comissao_valor_formatado %}
-                                        R$ {{ encargos_comissao_valor_formatado }}
-                                        {% else %}
-                                        -
-                                        {% endif %}
-                                    </div>
-                                </div>
                             </div>
                         </div>
-
-                        <!-- Lucro Bruto -->
-                        <hr class="my-4">
-
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h2 class="h6 mb-0 text-muted text-uppercase small">
-                                Margem de Contribuição e % RB
-                            </h2>
-                        </div>
-
-                        <div class="row g-3 align-items-end">
-                            <div class="col-md-4 col-lg-3 ms-auto">
-                                <label class="form-label mb-1 small">Margem de Contribuição</label>
-                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                    {% if margem_contribuicao_valor_formatado %}
-                                    R$ {{ margem_contribuicao_valor_formatado }}
-                                    {% else %}
-                                    -
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row g-3 align-items-end">
-                            <div class="col-md-4 col-lg-3 ms-auto">
-                                <label class="form-label mb-1 small">% RB</label>
-                                <div class="form-control form-control-sm text-end bg-light fw-semibold">
-                                    {% if percentual_rb_valor_formatado %}
-                                    R$ {{ percentual_rb_valor_formatado }}
-                                    {% else %}
-                                    -
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="card-footer bg-white border-0 d-flex justify-content-end gap-2 py-2">
-                        <a href="{{ url_for('home.nova_reserva') }}" class="btn btn-outline-secondary btn-sm">
-                            Limpar
-                        </a>
-                        <button type="submit" id="btn-submit" class="btn btn-primary btn-sm">
-                            Validar dados
-                        </button>
                     </div>
                 </div>
-            </form>
 
+                <!-- AÇÕES -->
+                <div class="mt-3 d-flex justify-content-end gap-2">
+                    <a href="{{ url_for('home.nova_reserva') }}" class="btn btn-outline-secondary btn-sm">
+                        Limpar
+                    </a>
+                    <button type="submit" id="btn-submit" class="btn btn-primary btn-sm">
+                        Validar dados
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 <script>
-    (function () {
-        // Esses valores também estão no Flask
-        const EMPRESA_FILIAIS = {
-            brasif: [
-                "Belo Horizonte", "Brasilia", "Cuiabá", "Curitiba",
-                "Goiânia", "Jundiaí", "Palmas", "Ribeirão Preto",
-                "Rio de Janeiro", "Serra"
-            ],
-            brasifagro: [
-                "Luís Eduardo Magalhães", "Roda Velha",
-                "Correntina", "Formosa do Rio Preto", "Bom Jesus"
-            ]
-        };
-
-        const empresaSelect = document.getElementById("empresa");
-        const filialSelect = document.getElementById("filial");
-        const submitBtn = document.getElementById("btn-submit");
-        const tabLinks = document.querySelectorAll(".nav-tabs .nav-link");
-
-        function preencherFiliais() {
-            const empresa = empresaSelect.value;
-            const filiais = EMPRESA_FILIAIS[empresa] || [];
-            const filialAtual = filialSelect.value;
-
-            filialSelect.innerHTML = "";
-
-            filiais.forEach(function (nome) {
-                const opt = document.createElement("option");
-                opt.value = nome;
-                opt.textContent = nome;
-                filialSelect.appendChild(opt);
-            });
-
-            if (filialAtual && filiais.includes(filialAtual)) {
-                filialSelect.value = filialAtual;
-            }
-        }
-
-        function atualizarTemaEmpresa() {
-            if (!empresaSelect) return;
-
-            const isBrasifAgro = empresaSelect.value === "brasifagro";
-
-            // Botão primary/danger
-            if (submitBtn) {
-                if (isBrasifAgro) {
-                    submitBtn.classList.remove("btn-primary");
-                    submitBtn.classList.add("btn-danger");
-                } else {
-                    submitBtn.classList.add("btn-primary");
-                    submitBtn.classList.remove("btn-danger");
-                }
-            }
-
-            // - Brasif Agro: abas inativas vermelhas, aba ativa preta
-            // - Outras opções: cores padrão do Bootstrap
-            tabLinks.forEach(function (link) {
-                const isActive = link.classList.contains("active");
-
-                if (isBrasifAgro) {
-                    if (isActive) {
-                        // Aba ativa: sem vermelho, usa cor padrão (preta)
-                        link.classList.remove("text-danger");
-                    } else {
-                        // Abas inativas: vermelhas
-                        link.classList.add("text-danger");
-                    }
-                } else {
-                    // Brasif / vazio: padrão
-                    link.classList.remove("text-danger");
-                }
-            });
-        }
-
-        if (empresaSelect && filialSelect) {
-            empresaSelect.addEventListener("change", function () {
-                preencherFiliais();
-                atualizarTemaEmpresa();
-            });
-
-            // Atualiza tema sempre que trocar de aba
-            tabLinks.forEach(function (link) {
-                link.addEventListener("shown.bs.tab", function () {
-                    atualizarTemaEmpresa();
-                });
-            });
-
-            // Estado inicial
-            if (empresaSelect.value) {
-                preencherFiliais();
-            }
-            atualizarTemaEmpresa();
-        }
-    })();
+    window.EMPRESA_FILIAIS = {{ empresa_filiais | tojson }};
 </script>
-
-<script>
-    (function () {
-        const MAX_LINHAS_OPCIONAIS = 100;
-        const tbody = document.getElementById("opcionais-rows");
-        const btnAdd = document.getElementById("btn-add-opcional");
-
-        if (!tbody || !btnAdd) {
-            return;
-        }
-
-        function contarLinhas() {
-            return tbody.querySelectorAll("tr.opcional-row").length;
-        }
-
-        function atualizarEstadoBotao() {
-            btnAdd.disabled = contarLinhas() >= MAX_LINHAS_OPCIONAIS;
-        }
-
-        function criarLinhaVazia() {
-            const tr = document.createElement("tr");
-            tr.className = "opcional-row";
-            tr.innerHTML = `
-                <td>
-                    <input type="text"
-                           name="opcional_nome"
-                           class="form-control form-control-sm"
-                           maxlength="150"
-                           placeholder="Ex.: AGREGA KIT INVERSÃO">
-                </td>
-                <td>
-                    <div class="input-group input-group-sm">
-                        <input type="text"
-                               name="opcional_horas"
-                               class="form-control text-end"
-                               placeholder="0,00">
-                        <span class="input-group-text">h</span>
-                    </div>
-                </td>
-                <td class="text-center">
-                    <button type="button"
-                            class="btn btn-outline-danger btn-sm"
-                            onclick="removerOpcionalRow(this)"
-                            title="Remover linha">
-                        &times;
-                    </button>
-                </td>
-            `;
-            return tr;
-        }
-
-        btnAdd.addEventListener("click", function () {
-            if (contarLinhas() >= MAX_LINHAS_OPCIONAIS) {
-                return;
-            }
-            tbody.appendChild(criarLinhaVazia());
-            atualizarEstadoBotao();
-        });
-
-        window.removerOpcionalRow = function (btn) {
-            const tr = btn.closest("tr.opcional-row");
-            if (!tr) {
-                return;
-            }
-            tbody.removeChild(tr);
-            atualizarEstadoBotao();
-        };
-
-        atualizarEstadoBotao();
-    })();
-</script>
+<script src="{{ url_for('static', filename='js/nova_reserva.js') }}"></script>
 
 {% endblock %}
